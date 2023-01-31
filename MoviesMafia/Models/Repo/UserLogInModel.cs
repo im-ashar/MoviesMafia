@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MoviesMafia.Models
+namespace MoviesMafia.Models.Repo
 {
-    public class UserLogIn
+    public class UserLogInModel
     {
         [Required]
         [StringLength(20)]

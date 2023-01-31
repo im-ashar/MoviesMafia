@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using MoviesMafia.Models;
+using MoviesMafia.Models.Repo;
 
 #nullable disable
 
 namespace MoviesMafia.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20230131161801_DBcheck")]
-    partial class DBcheck
+    [Migration("20230131224613_RepositoryPattern")]
+    partial class RepositoryPattern
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

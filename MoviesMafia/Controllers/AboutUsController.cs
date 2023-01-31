@@ -5,7 +5,7 @@ namespace MoviesMafia.Controllers
 {
     public class AboutUsController : Controller
     {
-        
+        [Authorize]
         public IActionResult AboutUs()
         {
             return View();

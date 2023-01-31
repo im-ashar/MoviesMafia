@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace MoviesMafia.Models
+namespace MoviesMafia.Models.Repo
 {
     public class UserContext : IdentityDbContext
     {

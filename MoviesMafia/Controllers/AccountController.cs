@@ -1,72 +1,44 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using MoviesMafia.Models;
-using System.Security.Claims;
+﻿using Microsoft.AspNetCore.Mvc;
+using MoviesMafia.Models.Repo;
 
 namespace MoviesMafia.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly UserManager<IdentityUser> userManager;
-        private readonly SignInManager<IdentityUser> signInManager;
-        public AccountController(UserManager<IdentityUser> uManager,
-        SignInManager<IdentityUser> sManager)
+        private readonly IUserRepo _userRepo;
 
+        public AccountController(IUserRepo userRepo)
         {
-            userManager = uManager;
-            signInManager = sManager;
+            _userRepo = userRepo;
         }
 
         [HttpPost]
-        public async Task<IActionResult> SignUp(UserSignUp model)
+        public async Task<IActionResult> SignUp(UserSignUpModel model)
         {
-
             if (ModelState.IsValid)
             {
-                var user = await userManager.FindByEmailAsync(model.Email);
-                if (user != null)
-                {
-                    ModelState.AddModelError("", "Email already in use");
-                    return View();
-                }
-                user = new IdentityUser
-                {
-                    UserName = model.Username,
-                    Email = model.Email,
-                    EmailConfirmed = true,
-                    LockoutEnabled = false,
-                };
-
-                var result = await userManager.CreateAsync(user, model.Password);
-
+                var result = await _userRepo.SignUp(model);
                 if (result.Succeeded)
                 {
-                    if (signInManager.IsSignedIn(User))
-                    {
-                        return RedirectToAction("Movies", "Movies");
-                    }
                     object data = "Welcome To MoviesMafia Now You Can Log In";
                     return View("ThankYou", data);
                 }
+
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError("", error.Description);
                 }
             }
-            return View();
 
+            return View(model);
         }
 
-
         [HttpPost]
-        public async Task<IActionResult> Login(UserLogIn model, string returnUrl = null)
+        public async Task<IActionResult> LogIn(UserLogInModel model, string returnUrl = null)
         {
-
             if (ModelState.IsValid)
             {
-                var result = await signInManager.PasswordSignInAsync(model.Username, model.Password, false, false);
-
+                var result = await _userRepo.LogIn(model);
                 if (result.Succeeded)
                 {
                     if (!string.IsNullOrEmpty(returnUrl))
@@ -76,18 +48,15 @@ namespace MoviesMafia.Controllers
                     return RedirectToAction("Movies", "Movies");
                 }
                 ModelState.AddModelError(string.Empty, "Invalid Username or Password");
-
             }
             else
             {
-                var result = await signInManager.PasswordSignInAsync(model.Username, model.Password, false, false);
-
+                var result = await _userRepo.LogIn(model);
                 if (result.Succeeded)
                 {
                     return RedirectToAction("Movies", "Movies");
                 }
                 ModelState.AddModelError(string.Empty, "Invalid Username or Password");
-
             }
             return View(model);
         }
@@ -95,7 +64,7 @@ namespace MoviesMafia.Controllers
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
-            await signInManager.SignOutAsync();
+            _userRepo.Logout();
             return RedirectToAction("Movies", "Movies");
         }
         [HttpGet]

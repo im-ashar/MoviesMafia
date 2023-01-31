@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using MoviesMafia.Models;
+using MoviesMafia.Models.Repo;
+
 
 var builder = WebApplication.CreateBuilder(args);
 //Getting Connection string
@@ -11,8 +12,15 @@ string connString = builder.Configuration.GetConnectionString("DefaultConnection
 var migrationAssembly = typeof(Program).Assembly.GetName().Name;
 
 // Add services to the container.
-builder.Services.AddDbContext<UserContext>(options => options.UseSqlServer(connString, sql => sql.MigrationsAssembly(migrationAssembly)));
-builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<UserContext>();
+
+builder.Services.AddDbContext<UserContext>(options =>
+options.UseSqlServer(connString, sql => sql.MigrationsAssembly(migrationAssembly)));
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<UserContext>();
+builder.Services.AddScoped<IUserRepo, UserRepo>();
+// Add additional services, etc.
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
