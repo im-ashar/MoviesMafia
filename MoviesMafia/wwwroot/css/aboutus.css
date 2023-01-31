@@ -1,0 +1,85 @@
+* {
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.feature__title {
+    color: #fff;
+    display: block;
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.feature__text {
+    display: block;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 15px;
+    line-height: 25px;
+    font-family: "Open Sans", sans-serif;
+    margin: 0;
+    letter-spacing: 0.2px;
+}
+
+.feature {
+    display: block;
+    position: relative;
+    margin: 15px 0;
+    padding-left: 65px;
+}
+
+.feature__icon {
+    display: block;
+    position: absolute;
+    top: -10px;
+    left: 0;
+    font-size: 46px;
+}
+
+    .feature__icon:before {
+        background-image: -webkit-linear-gradient( 0deg, #dc3545 0, #dc3545 100% );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: #dc3545;
+    }
+
+body {
+    background: linear-gradient( to right, rgba(0, 0, 0, 0.781), rgba(0, 0, 0, 0.781) ), url("../Netflix-Background.jpg");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+:root {
+    --primary-color: #303030;
+    --secondary-color: #212529;
+}
+
+.search {
+    background-color: transparent;
+    border: 2px solid var(--primary-color);
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 1rem;
+    color: #fff;
+    font-family: inherit;
+}
+
+    .search:focus {
+        outline: 0;
+        background-color: var(--primary-color);
+        color: #fff;
+    }
+
+    .search::placeholder {
+        color: #fff
+    }
+@media (max-width:320px){
+    main{
+        width:100vw;
+    }
+    a{
+        text-align:center;
+    }
+}
+

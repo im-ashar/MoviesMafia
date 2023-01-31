@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title - MoviesMafia</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    @RenderSection("aboutuscss",false)
+    @RenderSection("styleforsignup",false)
+    @RenderSection("moviescss",false)
+    
+
+</head>
+<body>
+    <header id="header">
+        @Html.Partial("_Navigation")
+    </header>
+
+    <main id="main">
+        @RenderBody()
+    </main>
+    
+    <footer class="d-flex align-items-center flex-wrap justify-content-around bg-dark">
+        <div class="col-12 d-inline-flex justify-content-center">
+            <a href="landingpage.html" class="text-light text-center">MoviesMafia</a>
+        </div>
+
+        <div class="col-12 d-inline-flex justify-content-center bottom-list">
+            <a href="~/Movies/Movies" class="p-3 text-light">Movies</a>
+            <a href="~/Movies/Movies" class="p-3 text-light">Seasons</a>
+            <a href="~/Account/SignUp" class="p-3 text-light">Sign Up</a>
+            <a href="~/AboutUs/AboutUs" class="p-3 text-light">About Us</a>
+        </div>
+        <div class="col-12">
+            <p class="text-light text-center"><b>© 2023 Copyright: MoviesMafia</b></p>
+        </div>
+    </footer>
+
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
