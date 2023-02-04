@@ -12,6 +12,5 @@ namespace MoviesMafia.Models.Repo
         {
             base.OnModelCreating(modelBuilder);
         }
-
     }
 }

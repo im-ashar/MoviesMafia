@@ -54,6 +54,11 @@ body {
     --primary-color: #303030;
     --secondary-color: #212529;
 }
+header {
+    padding: 1rem;
+    display: flex;
+    justify-content: space-around;
+}
 
 .search {
     background-color: transparent;
@@ -74,6 +79,7 @@ body {
     .search::placeholder {
         color: #fff
     }
+
 @media (max-width:320px){
     main{
         width:100vw;

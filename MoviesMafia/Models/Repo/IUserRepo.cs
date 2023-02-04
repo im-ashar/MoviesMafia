@@ -13,6 +13,8 @@ namespace MoviesMafia.Models.Repo
 
         [HttpGet]
         Task Logout();
+
+        string GetUserEmail(string userName);
     }
 
 }

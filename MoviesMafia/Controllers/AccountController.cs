@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using MoviesMafia.Models.GenericRepo;
 using MoviesMafia.Models.Repo;
+using System.Security.Claims;
 
 namespace MoviesMafia.Controllers
 {
@@ -79,10 +82,52 @@ namespace MoviesMafia.Controllers
         {
             return View();
         }
+        [Authorize]
         public IActionResult Profile()
-
         {
-            return View();
+            ViewBag.EmailData = _userRepo.GetUserEmail(User.Identity.Name);
+            var movie = new GenericRecordsDB<Records>(new RecordsDBContext());
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var list = movie.GetByUserId(userId);
+            return View(list);
         }
+        [Authorize]
+        public IActionResult DeleteRecord(string deleteButton)
+        {
+            ViewBag.EmailData = _userRepo.GetUserEmail(User.Identity.Name);
+            Records del = System.Text.Json.JsonSerializer.Deserialize<Records>(deleteButton);
+            var delete = new GenericRecordsDB<Records>(new RecordsDBContext());
+            delete.Delete(del);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var list = delete.GetByUserId(userId);
+            return RedirectToAction("Profile",list);
+        }
+
+        [Authorize]
+        public IActionResult RequestMovie(string name, int year, string type)
+        {
+            object data = string.Empty;
+            string cookieNameMovie = "movie_name_" + HttpContext.User.Identity.Name;
+            /*if (HttpContext.Request.Cookies.ContainsKey(cookieNameMovie))
+            {
+                data = "You Already Have Requested A Movie/Season Try Again After 24 Hours";
+            }
+            else
+            {*/
+                try
+                {
+                    var movie = new GenericRecordsDB<Records>(new RecordsDBContext());
+                    movie.Add(new Records { Name = name, UserId = User.FindFirstValue(ClaimTypes.NameIdentifier), Year = year, Type = type });
+                    data = "Your Requested Movie " + name + " Has Been Received";
+                    HttpContext.Response.Cookies.Append(cookieNameMovie, name, new CookieOptions { Expires = DateTime.Now.AddDays(1) });
+                }
+                catch (Exception ex)
+                {
+                    data = ex.Message;
+                }
+            //}
+            return View("ThankYou", data);
+        }
+
     }
 }

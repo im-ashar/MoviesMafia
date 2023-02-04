@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MoviesMafia.Models.GenericRepo;
 using MoviesMafia.Models.Repo;
 
 

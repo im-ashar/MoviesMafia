@@ -47,6 +47,10 @@ namespace MoviesMafia.Models.Repo
             await _signInManager.SignOutAsync();
             return;
         }
-
+        public string GetUserEmail(string userName)
+        {
+            var email = _userManager.FindByNameAsync(userName).Result.Email;
+            return email;
+        }
     }
 }
