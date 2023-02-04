@@ -1,7 +1,7 @@
 ﻿@section moviescss{
     <link rel="stylesheet" href="~/css/movies.css" asp-append-version="true" />
 }
-@model Task<Root>;
+@model Task<MovieRoot>;
 @{
 
     ViewBag.Title = "Search Movie";
@@ -61,17 +61,19 @@ catch
     @if (obj.Page == 1 && obj.Page < obj.Total_Pages)
     {
         <div class="pagination">
-            @using (Html.BeginForm("Page", "SearchMovies", FormMethod.Post))
+            @using (Html.BeginForm("Page", "Search", FormMethod.Post))
             {
                 prevPage = obj.Page - 1;
                 <button class="btn btn-dark page disabled" name="page" value="0" id="next">Previous Page</button>
+                <input type="hidden" name="type" value="Movie">
 
             }
             <div class="current" id="current">@obj.Page</div>
-            @using (Html.BeginForm("Page", "SearchMovies", FormMethod.Post))
+            @using (Html.BeginForm("Page", "Search", FormMethod.Post))
             {
                 nextPage = obj.Page + 1;
                 <button class="btn btn-dark page" name="page" value="@nextPage" id="next">Next Page</button>
+                <input type="hidden" name="type" value="Movie">
 
             }
         </div>
@@ -79,17 +81,19 @@ catch
     else if (obj.Page > 1 && obj.Page < obj.Total_Pages)
     {
         <div class="pagination">
-            @using (Html.BeginForm("Page", "SearchMovies", FormMethod.Post))
+            @using (Html.BeginForm("Page", "Search", FormMethod.Post))
             {
                 prevPage = obj.Page - 1;
                 <button class="btn btn-dark page" name="page" value="@prevPage" id="next">Previous Page</button>
+                <input type="hidden" name="type" value="Movie">
 
             }
             <div class="current" id="current">@obj.Page</div>
-            @using (Html.BeginForm("Page", "SearchMovies", FormMethod.Post))
+            @using (Html.BeginForm("Page", "Search", FormMethod.Post))
             {
                 nextPage = obj.Page + 1;
                 <button class="btn btn-dark page" name="page" value="@nextPage" id="next">Next Page</button>
+                <input type="hidden" name="type" value="Movie">
 
             }
         </div>
@@ -97,17 +101,19 @@ catch
     else if (obj.Page == obj.Total_Pages)
     {
         <div class="pagination">
-            @using (Html.BeginForm("Page", "SearchMovies", FormMethod.Post))
+            @using (Html.BeginForm("Page", "Search", FormMethod.Post))
             {
                 prevPage = obj.Page - 1;
                 <button class="btn btn-dark page disabled" name="page" value="@prevPage" id="next">Previous Page</button>
+                <input type="hidden" name="type" value="Movie">
 
             }
             <div class="current" id="current">@obj.Page</div>
-            @using (Html.BeginForm("Page", "SearchMovies", FormMethod.Post))
+            @using (Html.BeginForm("Page", "Search", FormMethod.Post))
             {
                 nextPage = obj.Page + 1;
                 <button class="btn btn-dark page disabled" name="page" value="@nextPage" id="next">Next Page</button>
+                <input type="hidden" name="type" value="Movie">
 
             }
         </div>
@@ -116,17 +122,19 @@ catch
     {
         <h3 class=" d-flex align-items-center text-light justify-content-center" style="width:70vw;height:70vh">No Result Found</h3>
         <div class="pagination">
-            @using (Html.BeginForm("Page", "SearchMovies", FormMethod.Post))
+            @using (Html.BeginForm("Page", "Search", FormMethod.Post))
             {
                 prevPage = obj.Page - 1;
                 <button class="btn btn-dark page disabled" name="page" value="@prevPage" id="next">Previous Page</button>
+                <input type="hidden" name="type" value="Movie">
 
             }
             <div class="current" id="current">0</div>
-            @using (Html.BeginForm("Page", "SearchMovies", FormMethod.Post))
+            @using (Html.BeginForm("Page", "Search", FormMethod.Post))
             {
                 nextPage = obj.Page + 1;
                 <button class="btn btn-dark page disabled" name="page" value="@nextPage" id="next">Next Page</button>
+                <input type="hidden" name="type" value="Movie">
 
             }
         </div>

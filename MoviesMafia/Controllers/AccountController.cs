@@ -100,7 +100,7 @@ namespace MoviesMafia.Controllers
             delete.Delete(del);
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var list = delete.GetByUserId(userId);
-            return RedirectToAction("Profile",list);
+            return RedirectToAction("Profile", list);
         }
 
         [Authorize]
@@ -108,12 +108,12 @@ namespace MoviesMafia.Controllers
         {
             object data = string.Empty;
             string cookieNameMovie = "movie_name_" + HttpContext.User.Identity.Name;
-            /*if (HttpContext.Request.Cookies.ContainsKey(cookieNameMovie))
+            if (HttpContext.Request.Cookies.ContainsKey(cookieNameMovie))
             {
                 data = "You Already Have Requested A Movie/Season Try Again After 24 Hours";
             }
             else
-            {*/
+            {
                 try
                 {
                     var movie = new GenericRecordsDB<Records>(new RecordsDBContext());
@@ -125,7 +125,7 @@ namespace MoviesMafia.Controllers
                 {
                     data = ex.Message;
                 }
-            //}
+            }
             return View("ThankYou", data);
         }
 

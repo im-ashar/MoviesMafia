@@ -1,6 +1,6 @@
 ﻿namespace MoviesMafia.Models
 {
-    public class Results
+    public class PlaynowResults
     {
         // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
         public string Iso6391 { get; set; }
@@ -15,10 +15,10 @@
         public string Id { get; set; }
     }
 
-    public class Playnow
+    public class PlaynowRoot
     {
         public int Id { get; set; }
-        public List<Results> Results { get; set; }
+        public List<PlaynowResults> Results { get; set; }
         public bool API_Fetched { get; set; }
 
     }

@@ -9,10 +9,10 @@ namespace MoviesMafia.Controllers
         
         public IActionResult Movies()
         {
-            API api = new API();
-            if (api.ApiCall().Result.API_Fetched)
+            MovieAPI api = new MovieAPI();
+            if (api.MovieApiCall().Result.API_Fetched)
             {
-                return View(api.ApiCall());
+                return View(api.MovieApiCall());
 
             }
             else
@@ -26,8 +26,8 @@ namespace MoviesMafia.Controllers
         [Authorize]
         public IActionResult Page(int page)
         {
-            API api = new API();
-            if (api.ApiCall().Result.API_Fetched)
+            MovieAPI api = new MovieAPI();
+            if (api.MovieApiCall().Result.API_Fetched)
             {
 
                 return View("Movies", api.Page(page));

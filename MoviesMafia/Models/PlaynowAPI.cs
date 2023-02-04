@@ -4,7 +4,7 @@ namespace MoviesMafia.Models
 {
     public class PlaynowAPI
     {
-        public async Task<Playnow> PlaynowApiCall(int playnow)
+        public async Task<PlaynowRoot> PlaynowApiCall(int playnow)
         {
             try
             {
@@ -21,13 +21,13 @@ namespace MoviesMafia.Models
 
                 // Read the response as a string
                 var responseBody = await response.Content.ReadAsStringAsync();
-                Playnow obj = JsonConvert.DeserializeObject<Playnow>(responseBody);
+                PlaynowRoot obj = JsonConvert.DeserializeObject<PlaynowRoot>(responseBody);
                 obj.API_Fetched = true;
                 return obj;
             }
             catch
             {
-                Playnow obj = new Playnow();
+                PlaynowRoot obj = new PlaynowRoot();
                 obj.API_Fetched = false;
                 return obj;
             }

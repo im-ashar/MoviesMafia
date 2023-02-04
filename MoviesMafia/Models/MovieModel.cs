@@ -1,6 +1,6 @@
 ﻿namespace MoviesMafia.Models
 {
-    public class Movies
+    public class MovieResults
     {
         public bool Adult { get; set; }
         public string Backdrop_Path { get; set; }
@@ -17,10 +17,10 @@
         public double Vote_Average { get; set; }
         public int Vote_Count { get; set; }
     }
-    public class Root
+    public class MovieRoot
     {
         public int Page { get; set; }
-        public List<Movies> Results { get; set; }
+        public List<MovieResults> Results { get; set; }
         public int Total_Pages { get; set; }
         public int Total_Results { get; set; }
         public bool API_Fetched { get; set; }
