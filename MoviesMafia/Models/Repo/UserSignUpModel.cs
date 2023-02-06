@@ -21,6 +21,11 @@ namespace MoviesMafia.Models.Repo
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "Password and Confirmation Password Doesn't Match")]
         public string ConfirmPassword { get; set; }
+
+
+        [Required(ErrorMessage = "Profile Picture Is Required")]
+        [DataType(DataType.Upload)]
+        public IFormFile ProfilePicture { get; set; }
     }
 }
 

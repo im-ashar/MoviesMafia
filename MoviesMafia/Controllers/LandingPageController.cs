@@ -6,7 +6,7 @@ namespace MoviesMafia.Controllers
     {
         public IActionResult LandingPage()
         {
-            
+
             return View();
         }
     }

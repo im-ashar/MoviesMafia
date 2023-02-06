@@ -19,8 +19,8 @@
                     <img width="100%" src="~/MoviesMafia.png" alt="">
                     <h5 class="card-title text-center mb-3 fw-light fs-5 text-white">Sign Up</h5>
                     <div asp-validation-summary="All" class="text-danger"></div>
-                   
-                    <form method="post" asp-action="SignUp">
+
+                    <form method="post" asp-action="SignUp" EncType="multipart/form-data">
                         <div class="form-floating mb-3 form-group ">
                             <input asp-for="Username"
                                    class="form-control"
@@ -57,7 +57,13 @@
                             <label asp-for="ConfirmPassword" class="form-label"></label>
                             <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                         </div>
-
+                        <label asp-for="ProfilePicture" class="form-label text-light"></label>
+                        <div class="form-floating mb-3 form-group">
+                            <input asp-for="ProfilePicture"
+                                   class="form-control"
+                                   id="ProfilePicture" />
+                            <span asp-validation-for="ProfilePicture" class="text-danger"></span>
+                        </div>
                         <div class="d-grid">
                             <button class="btn btn-danger btn-login text-uppercase fw-bold"
                                     type="submit">

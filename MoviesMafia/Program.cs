@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using MoviesMafia.Models.GenericRepo;
 using MoviesMafia.Models.Repo;
+using Microsoft.AspNetCore.Http;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,7 +17,7 @@ var migrationAssembly = typeof(Program).Assembly.GetName().Name;
 builder.Services.AddDbContext<UserContext>(options =>
 options.UseSqlServer(connString, sql => sql.MigrationsAssembly(migrationAssembly)));
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<ExtendedIdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<UserContext>();
 builder.Services.AddScoped<IUserRepo, UserRepo>();
 // Add additional services, etc.

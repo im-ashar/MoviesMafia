@@ -1,14 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 
 namespace MoviesMafia.Models.Repo
 {
     public class UserRepo : IUserRepo
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<ExtendedIdentityUser> _userManager;
+        private readonly SignInManager<ExtendedIdentityUser> _signInManager;
 
-        public UserRepo(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> sManager)
+        public UserRepo(UserManager<ExtendedIdentityUser> userManager, SignInManager<ExtendedIdentityUser> sManager)
         {
             _userManager = userManager;
             _signInManager = sManager;
@@ -16,14 +15,15 @@ namespace MoviesMafia.Models.Repo
 
         public async Task<IdentityResult> SignUp(UserSignUpModel model)
         {
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.ProfilePicture.FileName);
 
-            var user = new IdentityUser
+            var user = new ExtendedIdentityUser
             {
                 UserName = model.Username,
                 Email = model.Email,
                 EmailConfirmed = true,
-                LockoutEnabled = false
-
+                LockoutEnabled = false,
+                ProfilePicturePath = path
             };
             var checkEmail = await _userManager.FindByEmailAsync(model.Email);
             if (checkEmail != null)
@@ -34,6 +34,10 @@ namespace MoviesMafia.Models.Repo
             else
             {
                 var result = await _userManager.CreateAsync(user, model.Password);
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    model.ProfilePicture.CopyTo(stream);
+                }
                 return result;
             }
         }

@@ -4,7 +4,7 @@ namespace MoviesMafia.Models
 {
     public class SearchSeasons
     {
-        public async Task<SeasonRoot> SearchSeason(string search,string type)
+        public async Task<SeasonRoot> SearchSeason(string search, string type)
         {
             try
             {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Immutable;
 
 namespace MoviesMafia.Models.GenericRepo
 {
@@ -41,7 +42,7 @@ namespace MoviesMafia.Models.GenericRepo
         }
         public List<Records> GetByUserId(string userId)
         {
-            var listRecords = _context.Set<Records>().Where(x => x.UserId == userId).ToList();
+            List<Records> listRecords= _context.Set<Records>().Where(x => x.UserId == userId).Select(e => new Records{Id=e.Id, Name= e.Name, Year=e.Year,Type = e.Type }).ToList();
             return listRecords;
         }
     }

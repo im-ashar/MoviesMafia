@@ -45,12 +45,14 @@
                     @i.Overview
                 </div>
             </div>
-            <div class="playnow">
-                <button class="btn btn-danger w-100" type="submit">Play Now</button>
-            </div>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <div class="playnow">
+                    <button class="btn btn-danger w-100" type="submit">Play Now</button>
+                </div>
+            }
         </div>
     }
-
 }
 catch
 {

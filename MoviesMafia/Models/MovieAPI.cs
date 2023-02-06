@@ -1,5 +1,4 @@
-﻿using Microsoft.JSInterop.Implementation;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace MoviesMafia.Models
 {

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MoviesMafia.Models.Repo
 {
-    public class UserContext : IdentityDbContext
+    public class UserContext : IdentityDbContext<ExtendedIdentityUser>
     {
 
         public UserContext(DbContextOptions<UserContext> options) : base(options)

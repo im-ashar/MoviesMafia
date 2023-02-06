@@ -1,6 +1,8 @@
 ﻿@model List<MoviesMafia.Models.GenericRepo.Records>
 @using MoviesMafia.Models.GenericRepo
 @using System.Text.Json;
+@using System.Security.Claims;
+
 @section profilecss{
     <link rel="stylesheet" href="~/css/profile.css" asp-append-version="true" />
 }
@@ -77,16 +79,21 @@
             <tbody>
                 @foreach (var v in Model)
                 {
+
                     <tr>
                         <td>@v.Name</td>
                         <td>@v.Year</td>
                         <td>@v.Type</td>
-                        <td>
+                        <td class="d-flex justify-content-center">
                             @using (Html.BeginForm("DeleteRecord", "Account", FormMethod.Post))
                             {
                                 <button class="btn btn-danger" name="deleteButton" type="submit" value="@JsonSerializer.Serialize(v)">Delete</button>
                             }
+
+                            <a class="btn btn-primary" asp-action="EditRecord" asp-controller="Account" asp-route-id="@v.Id">Edit</a>
+
                         </td>
+
                     </tr>
                 }
             </tbody>
@@ -94,3 +101,4 @@
 
     </div>
 </div>
+

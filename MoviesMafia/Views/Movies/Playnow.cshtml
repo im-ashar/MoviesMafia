@@ -1,7 +1,23 @@
 ﻿@model Task<PlaynowRoot>
 @{
-    foreach (var i in Model.Result.Results)
-    {
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/@i.Key" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-    }
+    <div id="resultContainer">
+        @if (Model.Result.Results.Any())
+        {
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/@Model.Result.Results.First().Key" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        }
+    </div>
+
+    <button id="nextButton">Next</button>
+
+    <script>
+        var results = @Html.Raw(Json.Serialize(Model.Result.Results.Select(x => x.Key).ToList()));
+        var currentIndex = 0;
+
+        document.getElementById("nextButton").addEventListener("click", function() {
+            currentIndex = (currentIndex + 1) % results.length;
+            var resultContainer = document.getElementById("resultContainer");
+            resultContainer.innerHTML = '<iframe width="560" height="315" src="https://www.youtube.com/embed/' + results[currentIndex] + '" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
+        });
+    </script>
+
 }

@@ -6,7 +6,7 @@ namespace MoviesMafia.Controllers
 {
     public class MoviesController : Controller
     {
-        
+
         public IActionResult Movies()
         {
             MovieAPI api = new MovieAPI();
@@ -40,7 +40,7 @@ namespace MoviesMafia.Controllers
 
         public IActionResult Playnow(int playnow)
         {
-            PlaynowAPI api= new PlaynowAPI();
+            PlaynowAPI api = new PlaynowAPI();
             if (api.PlaynowApiCall(playnow).Result.API_Fetched)
             {
                 return View("Playnow", api.PlaynowApiCall(playnow));
@@ -49,7 +49,7 @@ namespace MoviesMafia.Controllers
             {
                 return View("ApiNotFetched");
             }
-            
+
         }
     }
 }

@@ -10,7 +10,7 @@ namespace MoviesMafia.Models
             {
                 var API_KEY = "api_key=730ab5da75a3cf6c71a47af0ec102ec0";
                 var BASE_URL = "https://api.themoviedb.org/3";
-                var API_URL = BASE_URL + "/movie/"+ playnow + "/videos?" + API_KEY;
+                var API_URL = BASE_URL + "/movie/" + playnow + "/videos?" + API_KEY;
 
 
                 // Create a new HTTP client
