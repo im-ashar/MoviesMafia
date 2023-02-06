@@ -23,10 +23,14 @@ namespace MoviesMafia.Models.GenericRepo
 
             foreach (var entityEntry in entries)
             {
-                if (entityEntry.State == EntityState.Added || entityEntry.State == EntityState.Modified)
+                if (entityEntry.State == EntityState.Added)
                 {
                     ((Records)entityEntry.Entity).CreatedAt = DateTime.UtcNow;
+                    ((Records)entityEntry.Entity).UpdatedAt = DateTime.UtcNow;
 
+                }
+                else if (entityEntry.State == EntityState.Modified)
+                {
                     ((Records)entityEntry.Entity).UpdatedAt = DateTime.UtcNow;
                 }
             }

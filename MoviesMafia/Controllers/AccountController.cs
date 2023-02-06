@@ -109,25 +109,25 @@ namespace MoviesMafia.Controllers
         {
             object data = string.Empty;
             string cookieNameMovie = "movie_name_" + HttpContext.User.Identity.Name;
-            /*if (HttpContext.Request.Cookies.ContainsKey(cookieNameMovie))
+            if (HttpContext.Request.Cookies.ContainsKey(cookieNameMovie))
             {
                 data = "You Already Have Requested A Movie/Season Try Again After 24 Hours";
             }
             else
-            {*/
-            try
             {
+                try
+                {
 
-                var record = new GenericRecordsDB<Records>(new RecordsDBContext());
-                record.Add(new Records { Name = name, UserId = User.FindFirstValue(ClaimTypes.NameIdentifier), Year = year, Type = type, ModifiedBy = User.FindFirstValue(ClaimTypes.NameIdentifier) });
-                data = "Your Requested Movie " + name + " Has Been Received";
-                HttpContext.Response.Cookies.Append(cookieNameMovie, name, new CookieOptions { Expires = DateTime.Now.AddDays(1) });
+                    var record = new GenericRecordsDB<Records>(new RecordsDBContext());
+                    record.Add(new Records { Name = name, UserId = User.FindFirstValue(ClaimTypes.NameIdentifier), Year = year, Type = type, ModifiedBy = User.FindFirstValue(ClaimTypes.NameIdentifier) });
+                    data = "Your Requested Movie " + name + " Has Been Received";
+                    HttpContext.Response.Cookies.Append(cookieNameMovie, name, new CookieOptions { Expires = DateTime.Now.AddDays(1) });
+                }
+                catch (Exception ex)
+                {
+                    data = ex.Message;
+                }
             }
-            catch (Exception ex)
-            {
-                data = ex.Message;
-            }
-            //}
             return View("ThankYou", data);
         }
 
