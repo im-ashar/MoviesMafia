@@ -15,6 +15,7 @@ namespace MoviesMafia.Models.Repo
         Task Logout();
 
         string GetUserEmail(string userName);
+        string GetUserProfilePicture(string userName);
     }
 
 }

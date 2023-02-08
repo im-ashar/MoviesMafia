@@ -87,9 +87,13 @@ namespace MoviesMafia.Controllers
         public IActionResult Profile()
         {
             ViewBag.EmailData = _userRepo.GetUserEmail(User.Identity.Name);
+            var ProfilePicturePath = _userRepo.GetUserProfilePicture(User.Identity.Name);
+            ProfilePicturePath = ProfilePicturePath.Substring(48);
+            ViewBag.ProfilePicturePath = ProfilePicturePath;
             var movie = new GenericRecordsDB<Records>(new RecordsDBContext());
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var list = movie.GetByUserId(userId);
+            
             return View(list);
         }
         [Authorize]
