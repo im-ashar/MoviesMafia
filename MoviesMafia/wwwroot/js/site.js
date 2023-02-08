@@ -6,7 +6,11 @@
         type: "POST",
         data: { search: search, type: type },
         success: function (data) {
-            $('#main').html(data).fadeIn('slow');
+            $('main').css('display', 'flex');
+            $('main').css('flex-wrap', 'wrap');
+            $('main').css('justify-content', 'center');
+            $('main').css('margin-top', '48px');
+            $('main').html(data);
         },
         error: function (data) {
             console.error(data)
