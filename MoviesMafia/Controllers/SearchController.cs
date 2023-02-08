@@ -7,6 +7,7 @@ namespace MoviesMafia.Controllers
     public class SearchController : Controller
     {
         public static string searchPassed { get; set; }
+
         [HttpPost]
         public IActionResult Search(string search, string type)
         {
@@ -17,7 +18,7 @@ namespace MoviesMafia.Controllers
                 ViewBag.x = searchPassed;
                 if (searchMovie.SearchMovie(search, type).Result.API_Fetched)
                 {
-                    return View("SearchMovies", searchMovie.SearchMovie(search, type));
+                    return PartialView("SearchMovies", searchMovie.SearchMovie(search, type));
                 }
                 else
                 {
@@ -32,7 +33,7 @@ namespace MoviesMafia.Controllers
                 if (searchSeason.SearchSeason(search, type).Result.API_Fetched)
                 {
 
-                    return View("SearchSeason", searchSeason.SearchSeason(search, type));
+                    return PartialView("SearchSeason", searchSeason.SearchSeason(search, type));
                 }
                 else
                 {

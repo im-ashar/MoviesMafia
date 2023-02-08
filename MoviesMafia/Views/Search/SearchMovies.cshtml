@@ -3,10 +3,10 @@
 }
 @model Task<MovieRoot>;
 @{
-
+    
     ViewBag.Title = "Search Movie";
     var obj = Model.Result;
-
+    
     var IMG_URL = "https://image.tmdb.org/t/p/w500";
     var currentPage = obj.Page;
     int nextPage, prevPage;
