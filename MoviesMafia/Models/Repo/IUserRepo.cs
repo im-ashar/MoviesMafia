@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace MoviesMafia.Models.Repo
 {
@@ -16,6 +17,8 @@ namespace MoviesMafia.Models.Repo
 
         string GetUserEmail(string userName);
         string GetUserProfilePicture(string userName);
+        Task<ExtendedIdentityUser> GetUser(ClaimsPrincipal userName);
+        Task<IdentityResult> UpdatePassword(ExtendedIdentityUser user,string currentPassword, string newPassword);
     }
 
 }

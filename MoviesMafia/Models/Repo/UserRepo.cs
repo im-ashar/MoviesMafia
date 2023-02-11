@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Security.Claims;
 
 namespace MoviesMafia.Models.Repo
 {
@@ -15,15 +17,17 @@ namespace MoviesMafia.Models.Repo
 
         public async Task<IdentityResult> SignUp(UserSignUpModel model)
         {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.ProfilePicture.FileName);
 
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.ProfilePicture.FileName);
+            var extension = Path.GetExtension(model.ProfilePicture.FileName);
+            var dbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProfilePictures", model.Username+extension);
             var user = new ExtendedIdentityUser
             {
                 UserName = model.Username,
                 Email = model.Email,
                 EmailConfirmed = true,
                 LockoutEnabled = false,
-                ProfilePicturePath = path
+                ProfilePicturePath = dbPath
             };
             var checkEmail = await _userManager.FindByEmailAsync(model.Email);
             if (checkEmail != null)
@@ -38,6 +42,7 @@ namespace MoviesMafia.Models.Repo
                 {
                     model.ProfilePicture.CopyTo(stream);
                 }
+                File.Move(path, dbPath);
                 return result;
             }
         }
@@ -60,6 +65,17 @@ namespace MoviesMafia.Models.Repo
         {
             var profilePicture = _userManager.FindByNameAsync(userName).Result.ProfilePicturePath;
             return profilePicture;
+        }
+        public async Task<ExtendedIdentityUser> GetUser(ClaimsPrincipal userName)
+        {
+            var user = await _userManager.GetUserAsync(userName);
+            return user;
+        }
+
+        public async Task<IdentityResult> UpdatePassword(ExtendedIdentityUser user, string currentPassword, string newPassword)
+        {
+            var update = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+            return update;
         }
     }
 }

@@ -24,7 +24,7 @@
                             <input asp-for="Username"
                                    class="form-control"
                                    placeholder="Username"
-                                   id="floatingInput" />
+                                   id="floatingInput" required/>
                             <label asp-for="Username" class="form-label"></label>
                             <span asp-validation-for="Username" class="text-danger"></span>
                         </div>
@@ -33,7 +33,7 @@
                             <input asp-for="Password"
                                    class="form-control"
                                    placeholder="Password"
-                                   id="exampleInputPassword1" />
+                                   id="exampleInputPassword1" required />
                             <label asp-for="Password" class="form-label"></label>
                             <span asp-validation-for="Password" class="text-danger"></span>
                         </div>

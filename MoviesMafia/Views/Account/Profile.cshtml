@@ -1,4 +1,5 @@
-﻿@model List<MoviesMafia.Models.GenericRepo.Records>
+﻿@model Tuple<List<Records>, UpdateUserModel>
+@using MoviesMafia.Models.Repo
 @using MoviesMafia.Models.GenericRepo
 @using System.Text.Json;
 @using System.Security.Claims;
@@ -21,20 +22,86 @@
             </div>
 
             <div class="col d-flex justify-content-center align-items-center flex-column text-light">
-                <h1 class="text-light text-center">Account Settings</h1>
+                <h1 class="text-light text-center fw-bolder">Account Settings</h1>
                 <p>@User.Identity.Name</p>
                 <p>@ViewBag.EmailData</p>
-                <button class="btn btn-danger ms-1">Update Account</button>
+                <button type="button" class="btn btn-danger" id="updateAccountBtn" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Update Account
+                </button>
+                <div id="result">
+
+                </div>
             </div>
 
         </div>
     </div>
 
 
+
+
+
+
+
+
+
+    <!-- Modal -->
+    <div class="modal fade text-light" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class=" modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Update Account</h1>
+                    <button type="button" class="btn-close bg-light" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form class="text-light" >
+                    <div class="modal-body">
+                        <div class="form-floating mb-3 form-group">
+                            <input asp-for="Item2.CurrentPassword"
+                                   class="form-control bg-dark text-light"
+                                   placeholder="Current Password"
+                                   id="CurrentPassword" />
+                            <label asp-for="Item2.CurrentPassword" class="form-label"></label>
+                            <span asp-validation-for="Item2.CurrentPassword" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3 form-group">
+                            <input asp-for="Item2.NewPassword"
+                                   class="form-control bg-dark text-light"
+                                   placeholder="New Password"
+                                   id="Password" />
+                            <label asp-for="Item2.NewPassword" class="form-label"></label>
+                            <span asp-validation-for="Item2.NewPassword" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3 form-group">
+                            <input asp-for="Item2.ConfirmPassword"
+                                   class="form-control bg-dark text-light"
+                                   placeholder="Confirm New Password"
+                                   id="ConfirmPassword" />
+                            <label asp-for="Item2.ConfirmPassword" class="form-label"></label>
+                            <span asp-validation-for="Item2.ConfirmPassword" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="closeBtn" data-bs-dismiss="modal">Close</button>
+                        <button type="button" onclick="UpdateAccount()" id="updatePassword" class="btn btn-danger">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
     <div class="container bg-dark d-flex flex-column">
         <div class="row">
             <div class="col-12 text-light mt-5 text-center">
-                <h1 class="">Requested Movies/Seasons By You</h1>
+                <h1 class="fw-bolder">Requested Movies/Seasons By You</h1>
             </div><br />
         </div>
 
@@ -49,20 +116,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var v in Model)
+                    @foreach (var v in Model.Item1)
                     {
 
                         <tr>
                             <td>@v.Name</td>
                             <td>@v.Year</td>
                             <td>@v.Type</td>
-                            <td class="d-flex justify-content-center">
-                                @using (Html.BeginForm("DeleteRecord", "Account", FormMethod.Post))
-                                {
-                                    <button class="btn btn-danger" name="deleteButton" type="submit" value="@JsonSerializer.Serialize(v)">Delete</button>
-                                }
+
+                            <td style='white-space: nowrap'>
 
                                 <a class="btn btn-primary" asp-action="EditRecord" asp-controller="Account" asp-route-id="@v.Id">Edit</a>
+                                <a class="btn btn-danger" asp-action="DeleteRecord" asp-controller="Account" asp-route-deleteButton="@JsonSerializer.Serialize(v)">Delete</a>
 
                             </td>
 
@@ -96,8 +161,6 @@
                     </div>
                     <button type="submit" class="btn btn-danger mb-3">Submit</button>
                 </form>
-
-
             </div>
         </div>
     </div>

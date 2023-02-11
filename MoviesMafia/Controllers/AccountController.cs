@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic;
 using MoviesMafia.Models.GenericRepo;
 using MoviesMafia.Models.Repo;
+using System;
 using System.Security.Claims;
+using System.Text;
 
 namespace MoviesMafia.Controllers
 {
@@ -21,6 +24,7 @@ namespace MoviesMafia.Controllers
         {
             if (ModelState.IsValid)
             {
+               
                 var result = await _userRepo.SignUp(model);
                 if (result.Succeeded)
                 {
@@ -68,7 +72,7 @@ namespace MoviesMafia.Controllers
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
-            _userRepo.Logout();
+            await _userRepo.Logout();
             return RedirectToAction("Movies", "Movies");
         }
         [HttpGet]
@@ -88,13 +92,14 @@ namespace MoviesMafia.Controllers
         {
             ViewBag.EmailData = _userRepo.GetUserEmail(User.Identity.Name);
             var ProfilePicturePath = _userRepo.GetUserProfilePicture(User.Identity.Name);
-            ProfilePicturePath = ProfilePicturePath.Substring(48);
-            ViewBag.ProfilePicturePath = ProfilePicturePath;
+            var extension=Path.GetExtension(ProfilePicturePath);
+            ViewBag.ProfilePicturePath = "ProfilePictures/"+User.Identity.Name+extension;
             var movie = new GenericRecordsDB<Records>(new RecordsDBContext());
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var list = movie.GetByUserId(userId);
-            
-            return View(list);
+            var tuple = new Tuple<List<Records>, UpdateUserModel>(list, new UpdateUserModel());
+
+            return View(tuple);
         }
         [Authorize]
         public IActionResult DeleteRecord(string deleteButton)
@@ -154,6 +159,27 @@ namespace MoviesMafia.Controllers
             GenericRecordsDB<Records> record = new GenericRecordsDB<Records>(new RecordsDBContext());
             Records r = record.GetById(id);
             return View("EditRecord", r);
+        }
+        [HttpPost]
+        public async Task<string> UpdateAccount(UpdateUserModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = _userRepo.GetUser(User);
+                var updateResult = await _userRepo.UpdatePassword(user.Result, model.CurrentPassword, model.NewPassword);
+                if(updateResult.Succeeded)
+                {
+                    return "Password Updated Successfully";
+                }
+                else
+                {
+                    return "Current Password Is Incorrect";
+                }
+            }
+            else
+            {
+                return "New Password and Confirm Password Do Not Match";
+            }
         }
     }
 }
