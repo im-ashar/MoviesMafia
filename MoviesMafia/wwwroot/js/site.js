@@ -29,12 +29,20 @@ function UpdateAccount() {
         type: "POST",
         data: { CurrentPassword: CurrentPassword, NewPassword: Password, ConfirmPassword: ConfirmPassword },
         success: function (data) {
-            alert(data)
-            $('#closeBtn').trigger('click')
+            if (data == 'New Password and Confirm Password Do Not Match' || data == 'Current Password Is Incorrect') {
+                $('#CurrentPassword').val('');
+                $('#Password').val('');
+                $('#ConfirmPassword').val('');
+                alert(data)
+            }
+            else {
+                alert(data)
+                $('#closeBtn').trigger('click')
+            }
         },
         error: function (data) {
             alert(data)
         }
-
     })
 }
+

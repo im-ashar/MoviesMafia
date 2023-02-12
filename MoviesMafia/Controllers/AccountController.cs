@@ -126,7 +126,6 @@ namespace MoviesMafia.Controllers
             {
                 try
                 {
-
                     var record = new GenericRecordsDB<Records>(new RecordsDBContext());
                     record.Add(new Records { Name = name, UserId = User.FindFirstValue(ClaimTypes.NameIdentifier), Year = year, Type = type, ModifiedBy = User.FindFirstValue(ClaimTypes.NameIdentifier) });
                     data = "Your Requested Movie " + name + " Has Been Received";

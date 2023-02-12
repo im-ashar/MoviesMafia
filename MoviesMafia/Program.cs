@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MoviesMafia.Models.Repo;
 using Microsoft.AspNetCore.Http;
+using System.Net;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,8 +21,10 @@ options.UseSqlServer(connString, sql => sql.MigrationsAssembly(migrationAssembly
 builder.Services.AddIdentity<ExtendedIdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<UserContext>();
 builder.Services.AddScoped<IUserRepo, UserRepo>();
-// Add additional services, etc.
 
+builder.Services.AddServerSideBlazor();
+
+// Add additional services, etc.
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
@@ -40,4 +43,5 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=LandingPage}/{action=LandingPage}/{id?}");
+app.MapBlazorHub();
 app.Run();

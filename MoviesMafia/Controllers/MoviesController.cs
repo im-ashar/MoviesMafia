@@ -37,13 +37,14 @@ namespace MoviesMafia.Controllers
                 return View("ApiNotFetched");
             }
         }
-
+        [Authorize]
         public IActionResult Playnow(int playnow)
         {
             PlaynowAPI api = new PlaynowAPI();
-            if (api.PlaynowApiCall(playnow).Result.API_Fetched)
+            if (api.PlaynowMoviesApiCall(playnow).Result.API_Fetched)
             {
-                return View("Playnow", api.PlaynowApiCall(playnow));
+
+                return View("Playnow", api.PlaynowMoviesApiCall(playnow));
             }
             else
             {

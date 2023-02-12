@@ -47,9 +47,9 @@
             </div>
             @if (User.Identity.IsAuthenticated)
             {
-                <div class="playnow">
-                    <button class="btn btn-danger w-100" type="submit">Play Now</button>
-                </div>
+                <form class="playnow" action="~/Season/Playnow" method="post">
+                    <button class="btn btn-danger w-100" type="submit" name="playnow" value="@i.Id">Play Now</button>
+                </form>
             }
         </div>
     }
