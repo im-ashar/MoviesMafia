@@ -199,3 +199,8 @@ header {
     font-size: 20px;
     font-weight: 600;
 }
+@media (max-width:575px) {
+    #form {
+        flex-wrap: wrap;
+    }
+}

@@ -210,3 +210,8 @@ a {
         justify-content: center;
     }
 }
+@media (max-width:575px) {
+    #form {
+        flex-wrap: wrap;
+    }
+}

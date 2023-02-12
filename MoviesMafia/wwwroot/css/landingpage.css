@@ -19,3 +19,8 @@
     .btn:hover {
         transform: scale(1.1);
     }
+@media (max-width:575px) {
+    #form {
+        flex-wrap: wrap;
+    }
+}
