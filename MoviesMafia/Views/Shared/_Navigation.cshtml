@@ -46,9 +46,8 @@
                 </li>
             </ul>
 
+            <form class="d-flex pe-lg-5 text-light " id="form" role="search">
 
-
-            <form class="d-flex pe-lg-5 text-light" id="form" role="search">
                 <input type="search"
                        placeholder="Search"
                        id="search"
@@ -57,6 +56,7 @@
                        name="search"
                        required
                        value="@ViewBag.x" />
+
                 <div class="form-group form-check form-check-inline m-2">
                     <input required class="form-check-input" type="radio" name="type" id="inlineRadio1" value="Movie">
                     <label class="form-check-label" for="inlineRadio1">Movie</label>
@@ -65,9 +65,8 @@
                     <input required class="form-check-input" type="radio" name="type" id="inlineRadio2" value="Season">
                     <label class="form-check-label" for="inlineRadio2">Season</label>
                 </div>
-                
-                <button class="btn btn-outline-light" type="button" onclick="SubmitForm()">
 
+                <button class="btn btn-outline-light" type="button" onclick="SubmitForm()">
                     Search
                 </button>
 
