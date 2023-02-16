@@ -3,7 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using MoviesMafia.Models.Repo;
 using Microsoft.AspNetCore.Http;
 using System.Net;
-
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 //Getting Connection string
@@ -18,8 +21,7 @@ var migrationAssembly = typeof(Program).Assembly.GetName().Name;
 builder.Services.AddDbContext<UserContext>(options =>
 options.UseSqlServer(connString, sql => sql.MigrationsAssembly(migrationAssembly)));
 
-builder.Services.AddIdentity<ExtendedIdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<UserContext>();
+builder.Services.AddIdentity<ExtendedIdentityUser, IdentityRole>().AddEntityFrameworkStores<UserContext>();
 builder.Services.AddScoped<IUserRepo, UserRepo>();
 
 builder.Services.AddServerSideBlazor();
@@ -27,7 +29,11 @@ builder.Services.AddServerSideBlazor();
 // Add additional services, etc.
 builder.Services.AddControllersWithViews();
 
+
+
+
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

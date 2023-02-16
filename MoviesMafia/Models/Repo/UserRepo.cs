@@ -1,26 +1,66 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System;
+using System.Collections.Specialized;
 using System.Security.Claims;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace MoviesMafia.Models.Repo
 {
+
     public class UserRepo : IUserRepo
     {
         private readonly UserManager<ExtendedIdentityUser> _userManager;
         private readonly SignInManager<ExtendedIdentityUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UserRepo(UserManager<ExtendedIdentityUser> userManager, SignInManager<ExtendedIdentityUser> sManager)
+
+        public UserRepo(UserManager<ExtendedIdentityUser> userManager, SignInManager<ExtendedIdentityUser> sManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = sManager;
+            _roleManager = roleManager;
         }
+        public async Task SeedAdmin()
+        {
+            if (!_roleManager.RoleExistsAsync("Admin").Result)
+            {
+                await _roleManager.CreateAsync(new IdentityRole { Name = "Admin" });
 
+            }
+            if (!_roleManager.RoleExistsAsync("User").Result)
+            {
+                await _roleManager.CreateAsync(new IdentityRole { Name = "User" });
+
+            }
+
+            var checkEmail = await _userManager.FindByEmailAsync("admin@moviesmafia.com");
+            if (checkEmail == null)
+            {
+                var Admin = new ExtendedIdentityUser
+                {
+                    UserName = "admin",
+                    Email = "admin@moviesmafia.com",
+                    EmailConfirmed = true,
+                    LockoutEnabled = false,
+                    ProfilePicturePath = ""
+                };
+                var result = await _userManager.CreateAsync(Admin, "admin@Moviesmafia123");
+
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(Admin, "Admin");
+                }
+            }
+
+        }
         public async Task<IdentityResult> SignUp(UserSignUpModel model)
         {
-
+            await SeedAdmin();
             var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.ProfilePicture.FileName);
             var extension = Path.GetExtension(model.ProfilePicture.FileName);
-            var dbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProfilePictures", model.Username+extension);
+            var dbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProfilePictures", model.Username + extension);
             var user = new ExtendedIdentityUser
             {
                 UserName = model.Username,
@@ -42,7 +82,8 @@ namespace MoviesMafia.Models.Repo
                 {
                     model.ProfilePicture.CopyTo(stream);
                 }
-                File.Move(path, dbPath);
+                File.Move(path, dbPath, true);
+                await _userManager.AddToRoleAsync(user, "User");
                 return result;
             }
         }
@@ -77,5 +118,43 @@ namespace MoviesMafia.Models.Repo
             var update = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
             return update;
         }
+        public async Task<IList<ExtendedIdentityUser>> GetAllUsers()
+        {
+            var usersInRole = await _userManager.GetUsersInRoleAsync("User");
+
+            return usersInRole;
+        }
+        public async Task<bool> DeleteUser(ExtendedIdentityUser user)
+        {
+            var result = await _userManager.DeleteAsync(user);
+            if (result.Succeeded)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public async Task<ExtendedIdentityUser> GetUserById(string id)
+        {
+            var result = await _userManager.FindByIdAsync(id);
+            return result;
+        }
+        public async Task<bool> UpdateEmail(string id, string email)
+        {
+            var result = await GetUserById(id);
+            result.Email = email;
+            var update=await _userManager.UpdateAsync(result);
+            if (update.Succeeded)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
+
 }

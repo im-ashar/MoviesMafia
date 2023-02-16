@@ -44,6 +44,15 @@
                        aria-current="page"
                        href="~/AboutUs/AboutUS">About Us</a>
                 </li>
+
+                @if(User.Identity.Name=="admin")
+                {
+                <li class="nav-item">
+                    <a class="nav-link active text-light btn btn-danger"
+                       aria-current="page"
+                       href="~/Account/Admin">Admin</a>
+                </li>
+                }
             </ul>
 
             <form class="d-flex pe-lg-5 text-light " id="form" role="search">

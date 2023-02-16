@@ -10,6 +10,7 @@ using System.Text;
 
 namespace MoviesMafia.Controllers
 {
+
     public class AccountController : Controller
     {
         private readonly IUserRepo _userRepo;
@@ -24,7 +25,7 @@ namespace MoviesMafia.Controllers
         {
             if (ModelState.IsValid)
             {
-               
+
                 var result = await _userRepo.SignUp(model);
                 if (result.Succeeded)
                 {
@@ -76,15 +77,16 @@ namespace MoviesMafia.Controllers
             return RedirectToAction("Movies", "Movies");
         }
         [HttpGet]
-        public IActionResult Login()
+        public async Task<IActionResult> Login()
         {
+            await _userRepo.Logout();
             return View();
         }
 
         [HttpGet]
-        public IActionResult SignUp()
-
+        public async Task<IActionResult> SignUp()
         {
+            await _userRepo.Logout();
             return View();
         }
         [Authorize]
@@ -92,8 +94,8 @@ namespace MoviesMafia.Controllers
         {
             ViewBag.EmailData = _userRepo.GetUserEmail(User.Identity.Name);
             var ProfilePicturePath = _userRepo.GetUserProfilePicture(User.Identity.Name);
-            var extension=Path.GetExtension(ProfilePicturePath);
-            ViewBag.ProfilePicturePath = "ProfilePictures/"+User.Identity.Name+extension;
+            var extension = Path.GetExtension(ProfilePicturePath);
+            ViewBag.ProfilePicturePath = "ProfilePictures/" + User.Identity.Name + extension;
             var movie = new GenericRecordsDB<Records>(new RecordsDBContext());
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var list = movie.GetByUserId(userId);
@@ -166,7 +168,7 @@ namespace MoviesMafia.Controllers
             {
                 var user = _userRepo.GetUser(User);
                 var updateResult = await _userRepo.UpdatePassword(user.Result, model.CurrentPassword, model.NewPassword);
-                if(updateResult.Succeeded)
+                if (updateResult.Succeeded)
                 {
                     return "Password Updated Successfully";
                 }
@@ -179,6 +181,35 @@ namespace MoviesMafia.Controllers
             {
                 return "New Password and Confirm Password Do Not Match";
             }
+        }
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+        [HttpGet]
+        public IActionResult Admin()
+        {
+            var allUsers = _userRepo.GetAllUsers();
+            return View(allUsers);
+        }
+        public async Task<IActionResult> DeleteUser(string deleteButton)
+        {
+            ExtendedIdentityUser del = System.Text.Json.JsonSerializer.Deserialize<ExtendedIdentityUser>(deleteButton);
+            var result = await _userRepo.DeleteUser(del);
+            var list = await _userRepo.GetAllUsers();
+            return RedirectToAction("Admin", list);
+        }
+        public async Task<IActionResult> EditUser(string id)
+        {
+            var reult = await _userRepo.GetUserById(id);
+            return View("EditUser", reult);
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateEmail(string id, string email)
+        {
+            var result = await _userRepo.UpdateEmail(id, email);
+            return RedirectToAction("Admin");
         }
     }
 }

@@ -13,9 +13,7 @@
         {
             current = 0;
         }
-        var iframe = new MarkupString($"<iframe id=player src={SendList[current]} allowfullscreen></iframe>");
 
-        InvokeAsync(() => StateHasChanged());
     }
     private void GetPrevious()
     {
@@ -24,9 +22,7 @@
         {
             current = 0;
         }
-        var iframe = new MarkupString($"<iframe id=player src={SendList[current]} allowfullscreen></iframe>");
 
-        InvokeAsync(() => StateHasChanged());
     }
 }
 

@@ -24,9 +24,12 @@
             </div>
         </div>
         <div class="row">
-            <div class="col">
-                <a class="btn btn-danger" href="~/Account/LogIn" role="button">Login</a>
-            </div>
+            @if (!User.Identity.IsAuthenticated)
+            {
+                <div class="col">
+                    <a class="btn btn-danger" href="~/Account/LogIn" role="button">Login</a>
+                </div>
+            }
             <div class="col">
                 <a class="btn btn-danger" href="~/Account/SignUp" role="button">Sign Up</a>
             </div>
