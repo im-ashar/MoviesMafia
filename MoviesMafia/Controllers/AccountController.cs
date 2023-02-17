@@ -77,16 +77,16 @@ namespace MoviesMafia.Controllers
             return RedirectToAction("Movies", "Movies");
         }
         [HttpGet]
-        public async Task<IActionResult> Login()
+        public IActionResult Login()
         {
-            await _userRepo.Logout();
+            _userRepo.Logout();
             return View();
         }
 
         [HttpGet]
-        public async Task<IActionResult> SignUp()
+        public IActionResult SignUp()
         {
-            await _userRepo.Logout();
+            _userRepo.Logout();
             return View();
         }
         [Authorize]
@@ -188,11 +188,13 @@ namespace MoviesMafia.Controllers
             return View();
         }
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult Admin()
         {
             var allUsers = _userRepo.GetAllUsers();
             return View(allUsers);
         }
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(string deleteButton)
         {
             ExtendedIdentityUser del = System.Text.Json.JsonSerializer.Deserialize<ExtendedIdentityUser>(deleteButton);
@@ -200,12 +202,14 @@ namespace MoviesMafia.Controllers
             var list = await _userRepo.GetAllUsers();
             return RedirectToAction("Admin", list);
         }
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditUser(string id)
         {
             var reult = await _userRepo.GetUserById(id);
             return View("EditUser", reult);
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateEmail(string id, string email)
         {
             var result = await _userRepo.UpdateEmail(id, email);

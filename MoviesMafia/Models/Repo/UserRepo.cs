@@ -5,6 +5,9 @@ using System;
 using System.Collections.Specialized;
 using System.Security.Claims;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using Aspose.Words;
+using SkiaSharp;
+using System.Drawing;
 
 namespace MoviesMafia.Models.Repo
 {
@@ -60,7 +63,7 @@ namespace MoviesMafia.Models.Repo
             await SeedAdmin();
             var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.ProfilePicture.FileName);
             var extension = Path.GetExtension(model.ProfilePicture.FileName);
-            var dbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProfilePictures", model.Username + extension);
+            var dbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProfilePictures", model.Username+extension);
             var user = new ExtendedIdentityUser
             {
                 UserName = model.Username,
@@ -77,16 +80,21 @@ namespace MoviesMafia.Models.Repo
             }
             else
             {
+
                 var result = await _userManager.CreateAsync(user, model.Password);
                 using (var stream = new FileStream(path, FileMode.Create))
                 {
                     model.ProfilePicture.CopyTo(stream);
+
                 }
+
+                
                 File.Move(path, dbPath, true);
                 await _userManager.AddToRoleAsync(user, "User");
                 return result;
             }
         }
+
         public async Task<Microsoft.AspNetCore.Identity.SignInResult> LogIn(UserLogInModel model, string returnUrl = null)
         {
             var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, false, false);
@@ -145,7 +153,7 @@ namespace MoviesMafia.Models.Repo
         {
             var result = await GetUserById(id);
             result.Email = email;
-            var update=await _userManager.UpdateAsync(result);
+            var update = await _userManager.UpdateAsync(result);
             if (update.Succeeded)
             {
                 return true;
