@@ -19,7 +19,7 @@ namespace MoviesMafia.Models.Repo
         string GetUserProfilePicture(string userName);
         Task<ExtendedIdentityUser> GetUser(ClaimsPrincipal userName);
         Task<IdentityResult> UpdatePassword(ExtendedIdentityUser user, string currentPassword, string newPassword);
-        Task SeedAdmin();
+        
         Task<IList<ExtendedIdentityUser>> GetAllUsers();
         Task<bool> DeleteUser(ExtendedIdentityUser user);
         Task<ExtendedIdentityUser> GetUserById(string id);

@@ -7,6 +7,7 @@ namespace MoviesMafia.Models.GenericRepo
     {
         public RecordsDBContext()
         {
+
         }
 
         public DbSet<Records> Records { get; set; }

@@ -34,6 +34,42 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+var scope = app.Services.CreateScope();
+var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+if (!await roleManager.RoleExistsAsync("Admin"))
+{
+    var adminRole = new IdentityRole("Admin");
+    await roleManager.CreateAsync(adminRole);
+}
+
+// Check if the "User" role exists and create it if it doesn't
+if (!await roleManager.RoleExistsAsync("User"))
+{
+    var userRole = new IdentityRole("User");
+    await roleManager.CreateAsync(userRole);
+}
+
+
+var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ExtendedIdentityUser>>();
+var adminUser = await userManager.FindByNameAsync("admin");
+if (adminUser == null)
+{
+    adminUser = new ExtendedIdentityUser
+    {
+        UserName = "admin",
+        Email = "admin@moviesmafia.com",
+        EmailConfirmed = true,
+        LockoutEnabled = false,
+        ProfilePicturePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProfilePictures", "admin.jpg")
+    };
+
+    var result = await userManager.CreateAsync(adminUser, "admin@Moviesmafia123");
+    if (result.Succeeded)
+    {
+        await userManager.AddToRoleAsync(adminUser, "Admin");
+    }
+
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -51,3 +87,6 @@ app.MapControllerRoute(
     pattern: "{controller=LandingPage}/{action=LandingPage}/{id?}");
 app.MapBlazorHub();
 app.Run();
+
+
+

@@ -16,51 +16,17 @@ namespace MoviesMafia.Models.Repo
     {
         private readonly UserManager<ExtendedIdentityUser> _userManager;
         private readonly SignInManager<ExtendedIdentityUser> _signInManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
 
 
-        public UserRepo(UserManager<ExtendedIdentityUser> userManager, SignInManager<ExtendedIdentityUser> sManager, RoleManager<IdentityRole> roleManager)
+        public UserRepo(UserManager<ExtendedIdentityUser> userManager, SignInManager<ExtendedIdentityUser> sManager)
         {
             _userManager = userManager;
             _signInManager = sManager;
-            _roleManager = roleManager;
         }
-        public async Task SeedAdmin()
-        {
-            if (!_roleManager.RoleExistsAsync("Admin").Result)
-            {
-                await _roleManager.CreateAsync(new IdentityRole { Name = "Admin" });
-
-            }
-            if (!_roleManager.RoleExistsAsync("User").Result)
-            {
-                await _roleManager.CreateAsync(new IdentityRole { Name = "User" });
-
-            }
-
-            var checkEmail = await _userManager.FindByEmailAsync("admin@moviesmafia.com");
-            if (checkEmail == null)
-            {
-                var Admin = new ExtendedIdentityUser
-                {
-                    UserName = "admin",
-                    Email = "admin@moviesmafia.com",
-                    EmailConfirmed = true,
-                    LockoutEnabled = false,
-                    ProfilePicturePath = ""
-                };
-                var result = await _userManager.CreateAsync(Admin, "admin@Moviesmafia123");
-
-                if (result.Succeeded)
-                {
-                    await _userManager.AddToRoleAsync(Admin, "Admin");
-                }
-            }
-
-        }
+        
         public async Task<IdentityResult> SignUp(UserSignUpModel model)
         {
-            await SeedAdmin();
+            
             var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.ProfilePicture.FileName);
             var extension = Path.GetExtension(model.ProfilePicture.FileName);
             var dbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProfilePictures", model.Username+extension);
@@ -113,6 +79,11 @@ namespace MoviesMafia.Models.Repo
         public string GetUserProfilePicture(string userName)
         {
             var profilePicture = _userManager.FindByNameAsync(userName).Result.ProfilePicturePath;
+
+            if (Path.DirectorySeparatorChar == '\\')
+            {
+                profilePicture= profilePicture.Replace('\\', '/');  
+            }
             return profilePicture;
         }
         public async Task<ExtendedIdentityUser> GetUser(ClaimsPrincipal userName)
