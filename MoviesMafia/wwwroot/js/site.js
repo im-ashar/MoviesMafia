@@ -1,6 +1,10 @@
 ﻿function SubmitForm() {
     var search = $("#search").val();
     var type = $("input[name='type']:checked").val();
+
+    // Show loading animation
+    $('main').html('<div class="spinner-border text-light d-flex justify-content-center align-items-center" role="status"><span class= "sr-only"></span></div> ');
+
     $.ajax({
         url: "/Search/Search",
         type: "POST",
@@ -18,6 +22,7 @@
 
     })
 }
+
 
 
 function UpdateAccount() {
