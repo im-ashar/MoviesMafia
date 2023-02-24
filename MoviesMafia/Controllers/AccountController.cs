@@ -1,12 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualBasic;
 using MoviesMafia.Models.GenericRepo;
 using MoviesMafia.Models.Repo;
-using System;
 using System.Security.Claims;
-using System.Text;
 
 namespace MoviesMafia.Controllers
 {
@@ -23,13 +19,14 @@ namespace MoviesMafia.Controllers
         [HttpPost]
         public async Task<IActionResult> SignUp(UserSignUpModel model)
         {
+
             if (ModelState.IsValid)
             {
 
                 var result = await _userRepo.SignUp(model);
                 if (result.Succeeded)
                 {
-                    object data = "Welcome To MoviesMafia Now You Can Log In";
+                    object data = "A Confirmation Email Has Been Sent To Your Email Address. Please Check Your Email And Click The Confirmation Link To Activate Your Account.";
                     return View("ThankYou", data);
                 }
 
@@ -45,27 +42,44 @@ namespace MoviesMafia.Controllers
         [HttpPost]
         public async Task<IActionResult> LogIn(UserLogInModel model, string returnUrl = null)
         {
+
             if (ModelState.IsValid)
             {
                 var result = await _userRepo.LogIn(model);
-                if (result.Succeeded)
+                if (result.IsNotAllowed)
                 {
-                    if (!string.IsNullOrEmpty(returnUrl))
-                    {
-                        return LocalRedirect(returnUrl);
-                    }
-                    return RedirectToAction("Movies", "Movies");
+                    ModelState.AddModelError(string.Empty, "In Order To Login You Need To Confirm Your Email. Check Your Email Box.");
+
                 }
-                ModelState.AddModelError(string.Empty, "Invalid Username or Password");
+                else
+                {
+                    if (result.Succeeded)
+                    {
+                        if (!string.IsNullOrEmpty(returnUrl))
+                        {
+                            return LocalRedirect(returnUrl);
+                        }
+                        return RedirectToAction("Movies", "Movies");
+                    }
+                    ModelState.AddModelError(string.Empty, "Invalid Username or Password");
+                }
             }
             else
             {
                 var result = await _userRepo.LogIn(model);
-                if (result.Succeeded)
+                if (result.IsNotAllowed)
                 {
-                    return RedirectToAction("Movies", "Movies");
+                    ModelState.AddModelError(string.Empty, "In Order To Login You Need To Confirm Your Email. Check Your Email Box.");
+
                 }
-                ModelState.AddModelError(string.Empty, "Invalid Username or Password");
+                else
+                {
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("Movies", "Movies");
+                    }
+                    ModelState.AddModelError(string.Empty, "Invalid Username or Password");
+                }
             }
             return View(model);
         }
@@ -77,16 +91,23 @@ namespace MoviesMafia.Controllers
             return RedirectToAction("Movies", "Movies");
         }
         [HttpGet]
-        public IActionResult Login()
+        public async Task<IActionResult> Login()
         {
-            _userRepo.Logout();
+            if (ModelState.IsValid)
+            {
+                await _userRepo.Logout();
+            }
             return View();
         }
 
         [HttpGet]
-        public IActionResult SignUp()
+        public async Task<IActionResult> SignUp()
         {
-            _userRepo.Logout();
+
+            if (ModelState.IsValid)
+            {
+                await _userRepo.Logout();
+            }
             return View();
         }
         [Authorize]
@@ -95,8 +116,7 @@ namespace MoviesMafia.Controllers
             ViewBag.EmailData = _userRepo.GetUserEmail(User.Identity.Name);
             var ProfilePicturePath = _userRepo.GetUserProfilePicture(User.Identity.Name);
             var extension = Path.GetExtension(ProfilePicturePath);
-            
-            ViewBag.ProfilePicturePath =  "/ProfilePictures/"+User.Identity.Name+extension;
+            ViewBag.ProfilePicturePath = User.Identity.Name + extension;
             var movie = new GenericRecordsDB<Records>(new RecordsDBContext());
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var list = movie.GetByUserId(userId);
@@ -104,6 +124,7 @@ namespace MoviesMafia.Controllers
 
             return View(tuple);
         }
+
         [Authorize]
         public IActionResult DeleteRecord(string deleteButton)
         {
@@ -216,5 +237,29 @@ namespace MoviesMafia.Controllers
             var result = await _userRepo.UpdateEmail(id, email);
             return RedirectToAction("Admin");
         }
+        [HttpGet]
+
+        public async Task<IActionResult> VerifyEmail(string email, string token)
+        {
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
+            {
+                return BadRequest("Invalid email or token.");
+            }
+
+            var result = await _userRepo.VerifyEmail(email, token);
+
+            if (result)
+            {
+                object data = "EmailConfirmed";
+                return View("ThankYou", data);
+            }
+            else
+            {
+                object data = "Error Confirming Your Email Address.";
+                return View("ThankYou", data);
+
+            }
+        }
+
     }
 }

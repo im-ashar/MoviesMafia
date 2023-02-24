@@ -10,7 +10,7 @@ namespace MoviesMafia.Models.Repo
         Task<IdentityResult> SignUp(UserSignUpModel model);
 
         [HttpPost]
-        Task<Microsoft.AspNetCore.Identity.SignInResult> LogIn(UserLogInModel model, string returnUrl = null);
+        Task<Microsoft.AspNetCore.Identity.SignInResult> LogIn(UserLogInModel model);
 
         [HttpGet]
         Task Logout();
@@ -24,7 +24,7 @@ namespace MoviesMafia.Models.Repo
         Task<bool> DeleteUser(ExtendedIdentityUser user);
         Task<ExtendedIdentityUser> GetUserById(string id);
         Task<bool> UpdateEmail(string id,string email);
-        
+        Task<bool> VerifyEmail(string email, string token);
     }
 
 }

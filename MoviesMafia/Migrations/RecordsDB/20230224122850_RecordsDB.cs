@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MoviesMafia.Migrations.RecordsDB
 {
     /// <inheritdoc />
-    public partial class RecordsDataBaseCreated : Migration
+    public partial class RecordsDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

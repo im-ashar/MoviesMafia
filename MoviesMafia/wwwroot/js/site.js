@@ -2,8 +2,15 @@
     var search = $("#search").val();
     var type = $("input[name='type']:checked").val();
 
-    // Show loading animation
+
+    $('main').css('display', 'flex');
+    $('main').css('justify-content', 'center');
+    $('main').css('margin-top', '200px');
     $('main').html('<div class="spinner-border text-light d-flex justify-content-center align-items-center" role="status"><span class= "sr-only"></span></div> ');
+    var ww = $(window).width();
+    if (ww < 992) {
+        $('.navbar-toggler').click();
+    }
 
     $.ajax({
         url: "/Search/Search",
