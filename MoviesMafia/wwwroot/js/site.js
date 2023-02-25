@@ -42,6 +42,7 @@ function UpdateAccount() {
     var CurrentPassword = $('#CurrentPassword').val();
     var Password = $('#Password').val();
     var ConfirmPassword = $('#ConfirmPassword').val();
+    $("#updatePasswordHeading").text("Updating...");
     $.ajax({
         url: "/Account/UpdatePassword",
         type: "POST",
@@ -54,6 +55,9 @@ function UpdateAccount() {
                 alert(data)
             }
             else {
+                $('#CurrentPassword').val('');
+                $('#Password').val('');
+                $('#ConfirmPassword').val('');
                 alert(data)
                 $('#closeBtn').trigger('click')
             }
@@ -73,6 +77,7 @@ function updateProfilePicture() {
     for (var i = 0; i != updatedProfilePicture.length; i++) {
         formData.append("updatedProfilePicture", updatedProfilePicture[i]); //loop through all files and append
     }
+    $("#updateProfilePictureHeading").text("Updating...");
     $.ajax(
         {
             url: "/Account/UpdateProfilePicture",
