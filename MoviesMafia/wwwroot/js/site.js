@@ -30,14 +30,20 @@
     })
 }
 
-
+$(document).ready(function () {
+    $("#updatePassword").click(function () {
+        if ($("#updatePasswordForm").valid()) {
+            UpdateAccount();
+        }
+    });
+});
 
 function UpdateAccount() {
     var CurrentPassword = $('#CurrentPassword').val();
     var Password = $('#Password').val();
     var ConfirmPassword = $('#ConfirmPassword').val();
     $.ajax({
-        url: "/Account/UpdateAccount",
+        url: "/Account/UpdatePassword",
         type: "POST",
         data: { CurrentPassword: CurrentPassword, NewPassword: Password, ConfirmPassword: ConfirmPassword },
         success: function (data) {
@@ -56,5 +62,34 @@ function UpdateAccount() {
             alert(data)
         }
     })
+}
+
+
+
+function updateProfilePicture() {
+    var input = document.getElementById("updateProfilePictureInput"); //get file input id
+    var updatedProfilePicture = input.files; //get files
+    var formData = new FormData(); //create form
+    for (var i = 0; i != updatedProfilePicture.length; i++) {
+        formData.append("updatedProfilePicture", updatedProfilePicture[i]); //loop through all files and append
+    }
+    $.ajax(
+        {
+            url: "/Account/UpdateProfilePicture",
+            data: formData, // send it as formData
+            processData: false,// tell jQuery not to process the data
+            contentType: false,// tell jQuery not to set contentType
+            type: "POST", //type is post as we will need to post files
+            success: function (data) {
+                alert(data);
+                $('#closeDpBtn').trigger('click');
+                location.reload(true);
+            },
+            error: function (data) {
+                alert(data)
+                $('#closeDpBtn').trigger('click')
+            }
+        }
+    );
 }
 

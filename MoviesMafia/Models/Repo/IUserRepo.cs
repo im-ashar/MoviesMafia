@@ -25,7 +25,7 @@ namespace MoviesMafia.Models.Repo
         Task<bool> UpdateEmail(string id,string email);
         Task<bool> VerifyEmail(string email, string token);
 
-
+        bool UpdateProfilePicture(IFormFile updatedProfilePicture, string userName);
     }
 
 }

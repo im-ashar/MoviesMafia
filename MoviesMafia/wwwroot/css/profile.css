@@ -54,10 +54,10 @@ header {
 
 
 @media (max-width:575px) {
-    #form{
-        flex-wrap:wrap;
+    #form {
+        flex-wrap: wrap;
     }
-    
+
     .container {
         width: 100vw;
         display: flex;
@@ -184,6 +184,7 @@ header {
     font-size: 20px;
     font-weight: 600;
 }
+
 @media(max-width:463px) {
 
     .minfo {
@@ -194,4 +195,31 @@ header {
         width: 150px;
         height: 300px;
     }
+}
+
+@media(max-width:767px) {
+
+    .dp {
+        display: flex;
+        justify-content: center;
+    }
+}
+
+.edit-profile-button {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display:none;
+    
+}
+
+.profile-image-container:hover .edit-profile-button {
+    display:block;
+    
+}
+.profile-image-container {
+    position: relative;
+    overflow: hidden;
+    width:18rem;
 }

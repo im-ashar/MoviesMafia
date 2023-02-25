@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Net.Mail;
 using System.Net;
+using MoviesMafia.Migrations;
 
 namespace MoviesMafia.Models.Repo
 {
@@ -57,8 +58,8 @@ namespace MoviesMafia.Models.Repo
                         mail.To.Add(model.Email);
                         mail.Subject = "Verify your email address";
                         mail.Body = $"<h4>Please click the following link to verify your email address: <a href='{verificationUrl}'>Verify Me</a></h4>";
-                        mail.IsBodyHtml= true;
-                        
+                        mail.IsBodyHtml = true;
+
 
                         using (SmtpClient smtp = new SmtpClient("live.smtp.mailtrap.io", 587))
                         {
@@ -122,8 +123,21 @@ namespace MoviesMafia.Models.Repo
         public async Task<bool> DeleteUser(ExtendedIdentityUser user)
         {
             var result = await _userManager.DeleteAsync(user);
+
+
+
             if (result.Succeeded)
             {
+                var path2 = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProfilePictures");
+                DirectoryInfo dir = new DirectoryInfo(path2);
+                FileInfo[] files = dir.GetFiles(user.UserName + ".*");
+                if (files.Length > 0)
+                {
+                    foreach (var file in files)
+                    {
+                        file.Delete();
+                    }
+                }
                 return true;
             }
             else
@@ -166,7 +180,41 @@ namespace MoviesMafia.Models.Repo
 
             return false;
         }
-        
+        public bool UpdateProfilePicture(IFormFile updatedProfilePicture, string userName)
+        {
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", updatedProfilePicture.FileName);
+            var extension = Path.GetExtension(updatedProfilePicture.FileName);
+            var dbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProfilePictures", userName + extension);
+            var user = _userManager.FindByNameAsync(userName);
+            user.Result.ProfilePicturePath = dbPath;
+            var result = _userManager.UpdateAsync(user.Result);
+            if (result.Result.Succeeded)
+            {
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    updatedProfilePicture.CopyTo(stream);
+
+                }
+
+                var path2 = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProfilePictures");
+                DirectoryInfo dir = new DirectoryInfo(path2);
+                FileInfo[] files = dir.GetFiles(userName + ".*");
+                if (files.Length > 0)
+                {
+                    foreach (var file in files)
+                    {
+                        file.Delete();
+                    }
+                }
+                File.Move(path, dbPath, true);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
     }
 
 }
