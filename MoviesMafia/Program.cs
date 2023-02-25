@@ -15,11 +15,11 @@ var migrationAssembly = typeof(Program).Assembly.GetName().Name;
 
 builder.Services.AddDbContext<UserContext>(options =>
 options.UseSqlServer(connString, sql => sql.MigrationsAssembly(migrationAssembly)));
-builder.Services.AddDbContext<RecordsDBContext>();
+builder.Services.AddDbContext<RecordsDBContext>(options => options.UseSqlServer(connString, sql => sql.MigrationsAssembly(migrationAssembly)));
 builder.Services.Configure<IdentityOptions>(options => options.SignIn.RequireConfirmedEmail = true);
 builder.Services.AddIdentity<ExtendedIdentityUser, IdentityRole>().AddEntityFrameworkStores<UserContext>().AddDefaultTokenProviders();
 builder.Services.AddScoped<IUserRepo, UserRepo>();
-
+builder.Services.AddScoped(typeof(IGenericRecordsDB<>), typeof(GenericRecordsDB<>));
 builder.Services.AddServerSideBlazor();
 
 // Add additional services, etc.

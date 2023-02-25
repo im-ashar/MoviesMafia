@@ -215,3 +215,14 @@ a {
         flex-wrap: wrap;
     }
 }
+@media(max-width:463px) {
+
+    .minfo {
+        width: auto;
+    }
+
+    .movie {
+        width: 150px;
+        height: 300px;
+    }
+}

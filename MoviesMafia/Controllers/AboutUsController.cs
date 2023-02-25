@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace MoviesMafia.Controllers
 {
@@ -12,3 +11,4 @@ namespace MoviesMafia.Controllers
         }
     }
 }
+

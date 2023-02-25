@@ -56,9 +56,9 @@ namespace MoviesMafia.Models.Repo
                         mail.From = new MailAddress("admin@moviesmafia.ga");
                         mail.To.Add(model.Email);
                         mail.Subject = "Verify your email address";
-                        mail.Body = $"Please click the following link to verify your email address: {verificationUrl}";
-
-
+                        mail.Body = $"<h4>Please click the following link to verify your email address: <a href='{verificationUrl}'>Verify Me</a></h4>";
+                        mail.IsBodyHtml= true;
+                        
 
                         using (SmtpClient smtp = new SmtpClient("live.smtp.mailtrap.io", 587))
                         {
@@ -166,7 +166,7 @@ namespace MoviesMafia.Models.Repo
 
             return false;
         }
-
+        
     }
 
 }

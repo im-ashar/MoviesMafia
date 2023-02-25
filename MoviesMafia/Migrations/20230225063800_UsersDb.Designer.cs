@@ -12,8 +12,8 @@ using MoviesMafia.Models.Repo;
 namespace MoviesMafia.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20230224122823_UsersDB")]
-    partial class UsersDB
+    [Migration("20230225063800_UsersDb")]
+    partial class UsersDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

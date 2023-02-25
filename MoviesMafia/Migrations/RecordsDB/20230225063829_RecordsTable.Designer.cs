@@ -12,8 +12,8 @@ using MoviesMafia.Models.GenericRepo;
 namespace MoviesMafia.Migrations.RecordsDB
 {
     [DbContext(typeof(RecordsDBContext))]
-    [Migration("20230224122850_RecordsDB")]
-    partial class RecordsDB
+    [Migration("20230225063829_RecordsTable")]
+    partial class RecordsTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

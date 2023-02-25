@@ -40,7 +40,7 @@ namespace MoviesMafia.Models.GenericRepo
             _context.Set<T>().Remove(entity);
             _context.SaveChanges();
         }
-        public List<Records> GetByUserId(string userId)
+        public List<Records> GetRecordsByUserId(string userId)
         {
             List<Records> listRecords= _context.Set<Records>().Where(x => x.UserId == userId).Select(e => new Records{Id=e.Id, Name= e.Name, Year=e.Year,Type = e.Type }).ToList();
             return listRecords;

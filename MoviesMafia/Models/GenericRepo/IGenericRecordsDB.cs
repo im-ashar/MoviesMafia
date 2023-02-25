@@ -7,6 +7,7 @@
         void Add(T entity);
         void Update(T entity);
         void Delete(T entity);
+        List<Records> GetRecordsByUserId(string userId);
     }
 
 }
