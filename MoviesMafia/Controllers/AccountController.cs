@@ -87,6 +87,7 @@ namespace MoviesMafia.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
             await _userRepo.Logout();
@@ -184,9 +185,11 @@ namespace MoviesMafia.Controllers
             Records r = _recordsRepo.GetById(id);
             return View("EditRecord", r);
         }
+        [Authorize]
         [HttpPost]
         public async Task<string> UpdatePassword(UpdateUserModel model)
         {
+            
             if (ModelState.IsValid)
             {
                 var user = _userRepo.GetUser(User);
@@ -238,8 +241,8 @@ namespace MoviesMafia.Controllers
             var result = await _userRepo.UpdateEmail(id, email);
             return RedirectToAction("Admin");
         }
-        [HttpGet]
 
+        [HttpPost]
         public async Task<IActionResult> VerifyEmail(string email, string token)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
@@ -261,17 +264,31 @@ namespace MoviesMafia.Controllers
 
             }
         }
-        public string UpdateProfilePicture(List<IFormFile> updatedProfilePicture)
+
+        [Authorize]
+        public IActionResult UpdateProfilePicture(List<IFormFile> updatedProfilePicture)
         {
-            var result = _userRepo.UpdateProfilePicture(updatedProfilePicture[0], User.Identity.Name);
-            if (result)
+            if(updatedProfilePicture.Count==0)
             {
-                return "Profile Picture Updated Successfully";
+                return BadRequest("Error");
+            }
+            if (ModelState.IsValid)
+            {
+                var result = _userRepo.UpdateProfilePicture(updatedProfilePicture[0], User.Identity.Name);
+                if (result)
+                {
+                    return Content("Profile Picture Updated Successfully");
+                }
+                else
+                {
+                    return Content("Error While Updating The Profile Picture");
+                }
             }
             else
             {
-                return "Error While Updating The Profile Picture";
+                return Content("Error While Updating The Profile Picture");
             }
         }
+
     }
 }
