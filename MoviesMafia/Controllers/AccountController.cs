@@ -242,7 +242,7 @@ namespace MoviesMafia.Controllers
             return RedirectToAction("Admin");
         }
 
-        [HttpPost]
+        
         public async Task<IActionResult> VerifyEmail(string email, string token)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
