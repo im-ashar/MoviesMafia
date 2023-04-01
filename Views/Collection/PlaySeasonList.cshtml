@@ -1,0 +1,37 @@
+﻿@model Task<SeasonDetailsModel>
+@{
+    var obj = Model;
+    ViewBag.Title = "Episodes";
+}
+@section playnowcss{
+    <link rel="stylesheet" href="~/css/playnow.css" asp-append-version="true" />
+
+}
+@if (obj.IsCompletedSuccessfully)
+{
+    <div class="container d-flex flex-column align-items-center">
+        @for (int i = 0; i < obj.Result.Seasons.Count; i++)
+        {
+            if (@obj.Result.Seasons[i].Name == "Specials")
+            {
+                continue;
+            }
+            else
+            {
+                <a class="btn btn-danger w-50 fs-3 fw-bolder">@obj.Result.Seasons[i].Name</a>
+                for (int j = 1; j <= obj.Result.Seasons[i].Episode_Count; j++)
+                {
+                    int z = i;
+                    if (i == 0)
+                    {
+                        z = i + 1;
+                    }
+
+                    var playnow = obj.Result.Id + "-" + z + "-" + j;
+                    <a class="btn btn-success w-25 m-1" asp-action="PlaySeason" asp-controller="Collection" asp-route-playnow="@playnow">Episode @j</a>
+                }
+            }
+
+        }
+    </div>
+}

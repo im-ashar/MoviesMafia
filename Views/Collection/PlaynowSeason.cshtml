@@ -1,0 +1,31 @@
+﻿@model Task<PlaynowRoot>
+@section playnowcss{
+    <link rel="stylesheet" href="~/css/playnow.css" asp-append-version="true" />
+}
+@{
+    ViewBag.Title = "Play Now";
+    var keyList = new List<string>();
+    
+    if (Model.Result.Results.Count == 0)
+    {
+        <div class="d-flex justify-content-center flex-column">
+            <h1 class="text-light">No Videos Found</h1>
+        </div>
+    }
+    else
+    {
+        foreach (var v in Model.Result.Results)
+        {
+            if (v.Site == "YouTube")
+            {
+                keyList.Add("https://www.youtube.com/embed/" + v.Key);
+            }
+        }
+    }
+}
+@if (Model.Result.Results.Count > 0)
+{
+    <div class="container d-flex justify-content-center flex-column">
+        @(await Html.RenderComponentAsync<MoviesMafia.Views.Shared.Component.Playnow>(RenderMode.ServerPrerendered, new { SendList = keyList }))
+    </div>
+}
