@@ -7,12 +7,16 @@
     ViewBag.Title = "Play Movie";
 
 }
-<div class="d-flex flex-column w-100 vh-100 mt-3 mb-2">
+
+<div class="container d-flex justify-content-center flex-column">
     <h1 class="mt-3 text-white text-center">If You Are Unable To Play Try Changing The Server</h1>
-    <div class="container w-100 h-100">
+    <div class="ratio ratio-16x9">
         <iframe class="w-100 h-100" id="iframe" src="https://autoembed.to/movie/tmdb/@Model" frameborder="0" allowfullscreen></iframe>
     </div>
 </div>
+
+
+
 
 
 <div class="modal fade" id="modal" tabindex="-1">
