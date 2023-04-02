@@ -1,4 +1,8 @@
-﻿function SubmitForm() {
+﻿$(document).ready(function () {
+    $("#modal").modal('show');
+});
+
+function SubmitForm() {
     var search = $("#search").val();
     var type = $("input[name='type']:checked").val();
 
