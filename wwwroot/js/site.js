@@ -106,3 +106,13 @@ $(document).ready(function () {
     $('.NO-CACHE').attr('src', function () { return $(this).attr('src') + "?a=" + Math.random() });
 });
 
+var prevScrollpos = window.pageYOffset;
+window.onscroll = function () {
+    var currentScrollPos = window.pageYOffset;
+    if (prevScrollpos > currentScrollPos) {
+        document.getElementsByClassName("navbar")[0].style.top = "0";
+    } else {
+        document.getElementsByClassName("navbar")[0].style.top = "-100px";
+    }
+    prevScrollpos = currentScrollPos;
+}
