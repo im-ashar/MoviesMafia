@@ -51,7 +51,9 @@ namespace MoviesMafia.Models.Repo
                     File.Move(path, dbPath, true);
                     await _userManager.AddToRoleAsync(user, "User");
                     var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var verificationUrl = $"http://localhost:5248/Account/VerifyEmail?email={Uri.EscapeDataString(model.Email)}&token={Uri.EscapeDataString(token)}";
+                    var url = Environment.GetEnvironmentVariable("VERIFICATION_URL");
+                    var verificationUrl = $"{url}/Account/VerifyEmail?email={Uri.EscapeDataString(model.Email)}&token={Uri.EscapeDataString(token)}";
+                    var smtpKey=Environment.GetEnvironmentVariable("SMTP_KEY");
                     using (MailMessage mail = new MailMessage())
                     {
                         mail.From = new MailAddress("admin@moviesmafia.ga");
@@ -64,7 +66,7 @@ namespace MoviesMafia.Models.Repo
                         using (SmtpClient smtp = new SmtpClient("live.smtp.mailtrap.io", 587))
                         {
                             smtp.UseDefaultCredentials = false;
-                            smtp.Credentials = new NetworkCredential("api", "15ae06ca69c50761268d7bd63c110c20");
+                            smtp.Credentials = new NetworkCredential("api",smtpKey);
                             smtp.EnableSsl = true;
                             smtp.Send(mail);
                         }
