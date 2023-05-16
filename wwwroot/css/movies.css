@@ -217,12 +217,19 @@ a {
 }
 @media(max-width:463px) {
 
-    .minfo {
-        width: auto;
+    
+    .movie {
+        width: 80%;
+        height: 80%;
     }
 
-    .movie {
-        width: 150px;
-        height: 300px;
+    main {
+        justify-content: space-around;
+        
     }
+
+    .minfo {
+        width: 11rem;
+    }
+    
 }
