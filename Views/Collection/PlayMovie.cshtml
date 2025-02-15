@@ -5,13 +5,12 @@
 }
 @{
     ViewBag.Title = "Play Movie";
-
 }
 
 <div class="container d-flex justify-content-center flex-column">
     <h1 class="mt-3 text-white text-center">If You Are Unable To Play Try Changing The Server</h1>
     <div class="ratio ratio-16x9">
-        <iframe class="w-100 h-100" id="iframe" src="https://autoembed.to/movie/tmdb/@Model" frameborder="0" allowfullscreen></iframe>
+        <iframe class="w-100 h-100" id="iframe" src="@AppSettings.AutoEmbedUrl/movie/tmdb/@Model" frameborder="0" allowfullscreen></iframe>
     </div>
 </div>
 

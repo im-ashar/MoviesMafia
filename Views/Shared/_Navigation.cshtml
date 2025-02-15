@@ -45,7 +45,7 @@
                        href="~/AboutUs/AboutUS">About Us</a>
                 </li>
 
-                @if (User.Identity.Name == Environment.GetEnvironmentVariable("ADMIN_USERNAME"))
+                @if (User.Identity.Name == AppSettings.AdminDetails.UserName)
                 {
                 <li class="nav-item">
                     <a class="nav-link active text-light btn btn-danger"

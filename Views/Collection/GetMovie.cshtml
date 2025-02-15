@@ -2,9 +2,9 @@
     <link rel="stylesheet" href="~/css/movies.css" asp-append-version="true" />
 }
 
-@model Task<MovieRoot>
+@model MovieRoot
 @{
-    var obj = Model.Result;
+    var obj = Model;
 
     var IMG_URL = "https://image.tmdb.org/t/p/w500";
     var currentPage = obj.Page;

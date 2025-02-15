@@ -6,26 +6,23 @@ namespace MoviesMafia.Models.Repo
 {
     public interface IUserRepo
     {
-        [HttpPost]
-        Task<IdentityResult> SignUp(UserSignUpModel model);
+        Task<IdentityResult> SignUpAsync(UserSignUpModel model);
 
-        [HttpPost]
-        Task<Microsoft.AspNetCore.Identity.SignInResult> LogIn(UserLogInModel model);
+        Task<Microsoft.AspNetCore.Identity.SignInResult> LogInAsync(UserLogInModel model);
 
-        [HttpGet]
-        Task Logout();
+        Task LogoutAsync();
 
-        string GetUserEmail(string userName);
-        string GetUserProfilePicture(string userName);
-        Task<ExtendedIdentityUser> GetUser(ClaimsPrincipal userName);
-        Task<IdentityResult> UpdatePassword(ExtendedIdentityUser user, string currentPassword, string newPassword);
-        Task<IList<ExtendedIdentityUser>> GetAllUsers();
-        Task<bool> DeleteUser(ExtendedIdentityUser user);
-        Task<ExtendedIdentityUser> GetUserById(string id);
-        Task<bool> UpdateEmail(string id,string email);
-        Task<bool> VerifyEmail(string email, string token);
+        Task<string?> GetUserEmailAsync(string userName);
+        Task<string?> GetUserProfilePictureAsync(string userName);
+        Task<AppUser> GetUserAsync(ClaimsPrincipal userName);
+        Task<IdentityResult> UpdatePasswordAsync(AppUser user, string currentPassword, string newPassword);
+        Task<IList<AppUser>> GetAllUsersAsync();
+        Task<bool> DeleteUserAsync(AppUser user);
+        Task<AppUser> GetUserByIdAsync(string id);
+        Task<bool> UpdateEmailAsync(string id, string email);
+        Task<bool> VerifyEmailAsync(string email, string token);
 
-        bool UpdateProfilePicture(IFormFile updatedProfilePicture, string userName);
+        Task<bool> UpdateProfilePictureAsync(IFormFile updatedProfilePicture, string userName);
     }
 
 }

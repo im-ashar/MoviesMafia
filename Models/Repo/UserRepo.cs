@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using MoviesMafia.Configurations;
 using System.Net;
 using System.Net.Mail;
 using System.Security.Claims;
@@ -8,22 +9,24 @@ namespace MoviesMafia.Models.Repo
 
     public class UserRepo : IUserRepo
     {
-        private readonly UserManager<ExtendedIdentityUser> _userManager;
-        private readonly SignInManager<ExtendedIdentityUser> _signInManager;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly SmtpConfig _smtpConfig;
 
-
-
-        public UserRepo(UserManager<ExtendedIdentityUser> userManager, SignInManager<ExtendedIdentityUser> sManager)
+        public UserRepo(UserManager<AppUser> userManager, SignInManager<AppUser> sManager, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _signInManager = sManager;
+            _httpContextAccessor = httpContextAccessor;
+            _smtpConfig = AppSettings.SmtpConfig;
         }
-        public async Task<IdentityResult> SignUp(UserSignUpModel model)
+        public async Task<IdentityResult> SignUpAsync(UserSignUpModel model)
         {
             var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.ProfilePicture.FileName);
             var extension = Path.GetExtension(model.ProfilePicture.FileName);
             var dbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProfilePictures", model.Username + extension);
-            var user = new ExtendedIdentityUser
+            var user = new AppUser
             {
                 UserName = model.Username,
                 Email = model.Email,
@@ -51,24 +54,23 @@ namespace MoviesMafia.Models.Repo
                     File.Move(path, dbPath, true);
                     await _userManager.AddToRoleAsync(user, "User");
                     var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var url = Environment.GetEnvironmentVariable("VERIFICATION_URL");
-                    var verificationUrl = $"{url}/Account/VerifyEmail?email={Uri.EscapeDataString(model.Email)}&token={Uri.EscapeDataString(token)}";
-                    var smtpKey=Environment.GetEnvironmentVariable("SMTP_KEY");
+                    var url = _httpContextAccessor.HttpContext?.Request.Host;
+                    var verificationUrl = $"https://{url}/Account/VerifyEmail?email={Uri.EscapeDataString(model.Email)}&token={Uri.EscapeDataString(token)}";
                     using (MailMessage mail = new MailMessage())
                     {
-                        mail.From = new MailAddress("admin@moviesmafia.ga");
+                        mail.From = new MailAddress("admin@moviesmafia.runasp.net");
                         mail.To.Add(model.Email);
                         mail.Subject = "Verify your email address";
                         mail.Body = $"<h4>Please click the following link to verify your email address: <a href='{verificationUrl}'>Verify Me</a></h4>";
                         mail.IsBodyHtml = true;
 
 
-                        using (SmtpClient smtp = new SmtpClient("live.smtp.mailtrap.io", 587))
+                        using (SmtpClient smtp = new SmtpClient(_smtpConfig.Host, _smtpConfig.Port))
                         {
                             smtp.UseDefaultCredentials = false;
-                            smtp.Credentials = new NetworkCredential("api",smtpKey);
+                            smtp.Credentials = new NetworkCredential(_smtpConfig.UserName, _smtpConfig.Password);
                             smtp.EnableSsl = true;
-                            smtp.Send(mail);
+                            await smtp.SendMailAsync(mail);
                         }
                     }
                     return result;
@@ -81,48 +83,49 @@ namespace MoviesMafia.Models.Repo
             }
         }
 
-        public async Task<Microsoft.AspNetCore.Identity.SignInResult> LogIn(UserLogInModel model)
+        public async Task<Microsoft.AspNetCore.Identity.SignInResult> LogInAsync(UserLogInModel model)
         {
             var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, true, false);
             return result;
         }
-        public async Task Logout()
+        public async Task LogoutAsync()
         {
             await _signInManager.SignOutAsync();
             return;
         }
-        public string GetUserEmail(string userName)
+        public async Task<string?> GetUserEmailAsync(string userName)
         {
-            var email = _userManager.FindByNameAsync(userName).Result.Email;
-            return email;
+            var user = await _userManager.FindByNameAsync(userName);
+            return user?.Email;
         }
-        public string GetUserProfilePicture(string userName)
+        public async Task<string?> GetUserProfilePictureAsync(string userName)
         {
-            var profilePicture = _userManager.FindByNameAsync(userName).Result.ProfilePicturePath;
+            var user = await _userManager.FindByNameAsync(userName);
+            var profilePicture = user?.ProfilePicturePath;
             if (Path.DirectorySeparatorChar == '\\')
             {
-                profilePicture = profilePicture.Replace('\\', '/');
+                profilePicture = profilePicture?.Replace('\\', '/');
             }
             return profilePicture;
         }
-        public async Task<ExtendedIdentityUser> GetUser(ClaimsPrincipal userName)
+        public async Task<AppUser> GetUserAsync(ClaimsPrincipal userName)
         {
             var user = await _userManager.GetUserAsync(userName);
             return user;
         }
 
-        public async Task<IdentityResult> UpdatePassword(ExtendedIdentityUser user, string currentPassword, string newPassword)
+        public async Task<IdentityResult> UpdatePasswordAsync(AppUser user, string currentPassword, string newPassword)
         {
             var update = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
             return update;
         }
-        public async Task<IList<ExtendedIdentityUser>> GetAllUsers()
+        public async Task<IList<AppUser>> GetAllUsersAsync()
         {
             var usersInRole = await _userManager.GetUsersInRoleAsync("User");
 
             return usersInRole;
         }
-        public async Task<bool> DeleteUser(ExtendedIdentityUser user)
+        public async Task<bool> DeleteUserAsync(AppUser user)
         {
             var result = await _userManager.DeleteAsync(user);
 
@@ -147,14 +150,14 @@ namespace MoviesMafia.Models.Repo
                 return false;
             }
         }
-        public async Task<ExtendedIdentityUser> GetUserById(string id)
+        public async Task<AppUser> GetUserByIdAsync(string id)
         {
             var result = await _userManager.FindByIdAsync(id);
             return result;
         }
-        public async Task<bool> UpdateEmail(string id, string email)
+        public async Task<bool> UpdateEmailAsync(string id, string email)
         {
-            var result = await GetUserById(id);
+            var result = await GetUserByIdAsync(id);
             result.Email = email;
             var update = await _userManager.UpdateAsync(result);
             if (update.Succeeded)
@@ -166,7 +169,7 @@ namespace MoviesMafia.Models.Repo
                 return false;
             }
         }
-        public async Task<bool> VerifyEmail(string email, string token)
+        public async Task<bool> VerifyEmailAsync(string email, string token)
         {
             var user = await _userManager.FindByEmailAsync(email);
 
@@ -182,7 +185,7 @@ namespace MoviesMafia.Models.Repo
 
             return false;
         }
-        public bool UpdateProfilePicture(IFormFile updatedProfilePicture, string userName)
+        public async Task<bool> UpdateProfilePictureAsync(IFormFile updatedProfilePicture, string userName)
         {
 
             var extension = Path.GetExtension(updatedProfilePicture.FileName);
@@ -191,10 +194,10 @@ namespace MoviesMafia.Models.Repo
 
 
             var dbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProfilePictures", userName + extension);
-            var user = _userManager.FindByNameAsync(userName);
-            user.Result.ProfilePicturePath = dbPath;
-            var result = _userManager.UpdateAsync(user.Result);
-            if (result.Result.Succeeded)
+            var user = await _userManager.FindByNameAsync(userName);
+            user.ProfilePicturePath = dbPath;
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
             {
                 using (var stream = new FileStream(path, FileMode.Create))
                 {

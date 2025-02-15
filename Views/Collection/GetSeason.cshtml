@@ -1,10 +1,10 @@
-﻿@section moviescss{
+﻿@section moviescss {
     <link rel="stylesheet" href="~/css/movies.css" asp-append-version="true" />
 }
 
-@model Task<SeasonRoot>
+@model SeasonRoot
 @{
-    var obj = Model.Result;
+    var obj = Model;
 
     var IMG_URL = "https://image.tmdb.org/t/p/w500";
     var currentPage = obj.Page;
@@ -37,7 +37,7 @@
         <div class="minfo">
             <div class="movie">
                 <img src=@IMG_URL@i.Poster_Path alt="@i.Name" />
-                
+
                 <div class="movie-info">
                     <h3>@i.Name</h3>
                     <span class="@getColor(i.Vote_Average)">@i.Vote_Average</span>

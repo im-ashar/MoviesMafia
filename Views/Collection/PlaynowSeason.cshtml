@@ -1,12 +1,12 @@
-﻿@model Task<PlaynowRoot>
-@section playnowcss{
+﻿@model PlaynowRoot
+@section playnowcss {
     <link rel="stylesheet" href="~/css/playnow.css" asp-append-version="true" />
 }
 @{
     ViewBag.Title = "Play Now";
     var keyList = new List<string>();
-    
-    if (Model.Result.Results.Count == 0)
+
+    if (Model.Results.Count == 0)
     {
         <div class="d-flex justify-content-center flex-column">
             <h1 class="text-light">No Videos Found</h1>
@@ -14,7 +14,7 @@
     }
     else
     {
-        foreach (var v in Model.Result.Results)
+        foreach (var v in Model.Results)
         {
             if (v.Site == "YouTube")
             {
@@ -23,7 +23,7 @@
         }
     }
 }
-@if (Model.Result.Results.Count > 0)
+@if (Model.Results.Count > 0)
 {
     <div class="container d-flex justify-content-center flex-column">
         <div class="ratio ratio-16x9">
@@ -38,7 +38,7 @@
     </div>
 }
 
-@section playnowscript{
+@section playnowscript {
 
     <script>
         var list = @Html.Raw(Json.Serialize(keyList))

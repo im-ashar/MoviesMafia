@@ -1,37 +1,28 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using MoviesMafia.Models.Repo;
-using MoviesMafia.Models.GenericRepo;
+using MoviesMafia.Configurations;
 using MoviesMafia.Models;
-using dotenv.net;
+using MoviesMafia.Models.GenericRepo;
+using MoviesMafia.Models.Repo;
 
 var builder = WebApplication.CreateBuilder(args);
-//Getting Connection string
-DotEnv.Load();
-string PGHOST = Environment.GetEnvironmentVariable("PGHOST");
-string PGPORT = Environment.GetEnvironmentVariable("PGPORT");
-string PGDATABASE = Environment.GetEnvironmentVariable("PGDATABASE");
-string PGUSER = Environment.GetEnvironmentVariable("PGUSER");
-string PGPASSWORD = Environment.GetEnvironmentVariable("PGPASSWORD");
 
-string connString = $"Server={PGHOST};Port={PGPORT};Database={PGDATABASE};User Id={PGUSER};Password={PGPASSWORD}";
+builder.Configuration.SetupAppSettings();
 
-//Getting Assembly Name
-var migrationAssembly = typeof(Program).Assembly.GetName().Name;
+var connectionString = AppSettings.ConnectionStrings.DefaultConnection;
+var adminDetails = AppSettings.AdminDetails;
 
 // Add services to the container.
 
-builder.Services.AddDbContext<UserContext>(options =>
-options.UseNpgsql(connString, sql => sql.MigrationsAssembly(migrationAssembly)));
-builder.Services.AddDbContext<RecordsDBContext>(options => options.UseNpgsql(connString, sql => sql.MigrationsAssembly(migrationAssembly)));
+builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 
 builder.Services.Configure<IdentityOptions>(options => options.SignIn.RequireConfirmedEmail = true);
-builder.Services.AddIdentity<ExtendedIdentityUser, IdentityRole>().AddEntityFrameworkStores<UserContext>().AddDefaultTokenProviders();
+builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 builder.Services.AddScoped<IUserRepo, UserRepo>();
 builder.Services.AddScoped<IAPICalls, APICalls>();
-builder.Services.AddScoped(typeof(IGenericRecordsDB<>), typeof(GenericRecordsDB<>));
-builder.Services.AddServerSideBlazor();
-
+builder.Services.AddScoped<IRecordsRepo, RecordsRepo>();
+builder.Services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
+builder.Services.AddHttpContextAccessor();
 // Add additional services, etc.
 builder.Services.AddControllersWithViews();
 builder.Services.ConfigureApplicationCookie(options =>
@@ -43,23 +34,19 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 var app = builder.Build();
 
-var scope = app.Services.CreateScope();
+using var scope = app.Services.CreateScope();
 
-var migUserContext = scope.ServiceProvider.GetRequiredService<UserContext>();
-migUserContext.Database.MigrateAsync().Wait();
+using var appDbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+await appDbContext.Database.MigrateAsync();
 
 
-var migRecordsContext = scope.ServiceProvider.GetRequiredService<RecordsDBContext>();
-migRecordsContext.Database.MigrateAsync().Wait();
-
-var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+using var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 if (!await roleManager.RoleExistsAsync("Admin"))
 {
     var adminRole = new IdentityRole("Admin");
     await roleManager.CreateAsync(adminRole);
 }
 
-// Check if the "User" role exists and create it if it doesn't
 if (!await roleManager.RoleExistsAsync("User"))
 {
     var userRole = new IdentityRole("User");
@@ -67,15 +54,15 @@ if (!await roleManager.RoleExistsAsync("User"))
 }
 
 
-var adminPassword = Environment.GetEnvironmentVariable("ADMIN_PASSWORD");
-var adminUsername = Environment.GetEnvironmentVariable("ADMIN_USERNAME");
-var adminEmail = Environment.GetEnvironmentVariable("ADMIN_EMAIL");
-var adminProfilePicturePath = Environment.GetEnvironmentVariable("ADMIN_PROFILE_PICTURE_PATH");
-var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ExtendedIdentityUser>>();
+var adminPassword = adminDetails.Password;
+var adminUsername = adminDetails.UserName;
+var adminEmail = adminDetails.Email;
+var adminProfilePicturePath = adminDetails.ProfilePicturePath;
+using var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
 var adminUser = await userManager.FindByNameAsync(adminUsername);
 if (adminUser == null)
 {
-    adminUser = new ExtendedIdentityUser
+    adminUser = new AppUser
     {
         UserName = adminUsername,
         Email = adminEmail,
@@ -105,7 +92,6 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=LandingPage}/{action=LandingPage}/{id?}");
-app.MapBlazorHub();
 app.Run();
 
 

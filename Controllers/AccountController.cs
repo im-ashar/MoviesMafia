@@ -11,8 +11,8 @@ namespace MoviesMafia.Controllers
     public class AccountController : Controller
     {
         private readonly IUserRepo _userRepo;
-        private readonly IGenericRecordsDB<Records> _recordsRepo;
-        public AccountController(IUserRepo userRepo, IGenericRecordsDB<Records> recordsRepo)
+        private readonly IRecordsRepo _recordsRepo;
+        public AccountController(IUserRepo userRepo, IRecordsRepo recordsRepo)
         {
             _userRepo = userRepo;
             _recordsRepo = recordsRepo;
@@ -25,7 +25,7 @@ namespace MoviesMafia.Controllers
             if (ModelState.IsValid)
             {
 
-                var result = await _userRepo.SignUp(model);
+                var result = await _userRepo.SignUpAsync(model);
                 if (result.Succeeded)
                 {
                     object data = "A Confirmation Email Has Been Sent To Your Email Address. Please Check Your Email And Click The Confirmation Link To Activate Your Account.";
@@ -47,7 +47,7 @@ namespace MoviesMafia.Controllers
 
             if (ModelState.IsValid)
             {
-                var result = await _userRepo.LogIn(model);
+                var result = await _userRepo.LogInAsync(model);
                 if (result.IsNotAllowed)
                 {
                     ModelState.AddModelError(string.Empty, "In Order To Login You Need To Confirm Your Email. Check Your Email Box.");
@@ -64,12 +64,12 @@ namespace MoviesMafia.Controllers
                         return RedirectToAction("GetMovie", "Collection");
                     }
                     ModelState.AddModelError(string.Empty, "Invalid Username or Password");
-                    
+
                 }
             }
             else
             {
-                var result = await _userRepo.LogIn(model);
+                var result = await _userRepo.LogInAsync(model);
                 if (result.IsNotAllowed)
                 {
                     ModelState.AddModelError(string.Empty, "In Order To Login You Need To Confirm Your Email. Check Your Email Box.");
@@ -91,7 +91,7 @@ namespace MoviesMafia.Controllers
         [Authorize]
         public async Task<IActionResult> Logout()
         {
-            await _userRepo.Logout();
+            await _userRepo.LogoutAsync();
             return RedirectToAction("GetMovie", "Collection");
         }
         [HttpGet]
@@ -99,7 +99,7 @@ namespace MoviesMafia.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _userRepo.Logout();
+                await _userRepo.LogoutAsync();
             }
             return View();
         }
@@ -110,15 +110,15 @@ namespace MoviesMafia.Controllers
 
             if (ModelState.IsValid)
             {
-                await _userRepo.Logout();
+                await _userRepo.LogoutAsync();
             }
             return View();
         }
         [Authorize]
-        public IActionResult Profile()
+        public async Task<IActionResult> Profile()
         {
-            ViewBag.EmailData = _userRepo.GetUserEmail(User.Identity.Name);
-            var ProfilePicturePath = _userRepo.GetUserProfilePicture(User.Identity.Name);
+            ViewBag.EmailData = await _userRepo.GetUserEmailAsync(User.Identity.Name);
+            var ProfilePicturePath = await _userRepo.GetUserProfilePictureAsync(User.Identity.Name);
             var extension = Path.GetExtension(ProfilePicturePath);
             ViewBag.ProfilePicturePath = User.Identity.Name + extension;
 
@@ -132,7 +132,7 @@ namespace MoviesMafia.Controllers
         [Authorize]
         public IActionResult DeleteRecord(string deleteButton)
         {
-            ViewBag.EmailData = _userRepo.GetUserEmail(User.Identity.Name);
+            ViewBag.EmailData = _userRepo.GetUserEmailAsync(User.Identity.Name);
             Records del = System.Text.Json.JsonSerializer.Deserialize<Records>(deleteButton);
 
             _recordsRepo.Delete(del);
@@ -155,7 +155,7 @@ namespace MoviesMafia.Controllers
                 try
                 {
 
-                    _recordsRepo.Add(new Records { Name = name, UserId = User.FindFirstValue(ClaimTypes.NameIdentifier), Year = year, Type = type, ModifiedBy = User.FindFirstValue(ClaimTypes.NameIdentifier) });
+                    _recordsRepo.Add(new Records { Name = name, UserId = User.FindFirstValue(ClaimTypes.NameIdentifier), Year = year, Type = type });
                     data = "Your Requested Movie " + name + " Has Been Received";
                     HttpContext.Response.Cookies.Append(cookieNameMovie, name, new CookieOptions { Expires = DateTime.Now.AddDays(1) });
                 }
@@ -175,7 +175,7 @@ namespace MoviesMafia.Controllers
             {
 
                 Records r = _recordsRepo.GetById(id);
-                r.Name = name; r.Year = year; r.Type = type; r.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier); r.ModifiedBy = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                r.Name = name; r.Year = year; r.Type = type; r.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 _recordsRepo.Update(r);
             }
             return RedirectToAction("Profile");
@@ -190,11 +190,11 @@ namespace MoviesMafia.Controllers
         [HttpPost]
         public async Task<string> UpdatePassword(UpdateUserModel model)
         {
-            
+
             if (ModelState.IsValid)
             {
-                var user = _userRepo.GetUser(User);
-                var updateResult = await _userRepo.UpdatePassword(user.Result, model.CurrentPassword, model.NewPassword);
+                var user = _userRepo.GetUserAsync(User);
+                var updateResult = await _userRepo.UpdatePasswordAsync(user.Result, model.CurrentPassword, model.NewPassword);
                 if (updateResult.Succeeded)
                 {
                     return "Password Updated Successfully";
@@ -218,32 +218,33 @@ namespace MoviesMafia.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult Admin()
         {
-            var allUsers = _userRepo.GetAllUsers();
+            var allUsers = _userRepo.GetAllUsersAsync();
             return View(allUsers);
         }
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(string deleteButton)
         {
-            ExtendedIdentityUser del = System.Text.Json.JsonSerializer.Deserialize<ExtendedIdentityUser>(deleteButton);
-            var result = await _userRepo.DeleteUser(del);
-            var list = await _userRepo.GetAllUsers();
+            AppUser del = System.Text.Json.JsonSerializer.Deserialize<AppUser>(deleteButton);
+            var result = await _userRepo.DeleteUserAsync(del);
+            var list = await _userRepo.GetAllUsersAsync();
             return RedirectToAction("Admin", list);
         }
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditUser(string id)
         {
-            var reult = await _userRepo.GetUserById(id);
+            var reult = await _userRepo.GetUserByIdAsync(id);
             return View("EditUser", reult);
         }
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateEmail(string id, string email)
         {
-            var result = await _userRepo.UpdateEmail(id, email);
+            var result = await _userRepo.UpdateEmailAsync(id, email);
             return RedirectToAction("Admin");
         }
 
-        
+        [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> VerifyEmail(string email, string token)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
@@ -251,7 +252,7 @@ namespace MoviesMafia.Controllers
                 return BadRequest("Invalid Email Or Token.");
             }
 
-            var result = await _userRepo.VerifyEmail(email, token);
+            var result = await _userRepo.VerifyEmailAsync(email, token);
 
             if (result)
             {
@@ -267,15 +268,15 @@ namespace MoviesMafia.Controllers
         }
 
         [Authorize]
-        public IActionResult UpdateProfilePicture(List<IFormFile> updatedProfilePicture)
+        public async Task<IActionResult> UpdateProfilePicture(List<IFormFile> updatedProfilePicture)
         {
-            if(updatedProfilePicture.Count==0)
+            if (updatedProfilePicture.Count == 0)
             {
                 return BadRequest("Error");
             }
             if (ModelState.IsValid)
             {
-                var result = _userRepo.UpdateProfilePicture(updatedProfilePicture[0], User.Identity.Name);
+                var result = await _userRepo.UpdateProfilePictureAsync(updatedProfilePicture[0], User.Identity.Name);
                 if (result)
                 {
                     return Content("Profile Picture Updated Successfully");

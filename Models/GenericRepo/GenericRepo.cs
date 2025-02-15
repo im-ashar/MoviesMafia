@@ -1,21 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MoviesMafia.Configurations;
+using MoviesMafia.Models.Repo;
 using System.Collections.Immutable;
 
 namespace MoviesMafia.Models.GenericRepo
 {
-    public class GenericRecordsDB<T> : IGenericRecordsDB<T> where T : class
+    public class GenericRepo<T> : IGenericRepo<T> where T : class
     {
-        private readonly RecordsDBContext _context;
+        private readonly AppDbContext _context;
 
-
-        public GenericRecordsDB(RecordsDBContext context)
+        public GenericRepo(AppDbContext context)
         {
             _context = context;
         }
 
-        public T GetById(int id)
+        public T? GetById(int id)
         {
-            
+
             return _context.Set<T>().Find(id);
         }
 
@@ -40,11 +41,6 @@ namespace MoviesMafia.Models.GenericRepo
         {
             _context.Set<T>().Remove(entity);
             _context.SaveChanges();
-        }
-        public List<Records> GetRecordsByUserId(string userId)
-        {
-            List<Records> listRecords= _context.Set<Records>().Where(x => x.UserId == userId).Select(e => new Records{Id=e.Id, Name= e.Name, Year=e.Year,Type = e.Type }).ToList();
-            return listRecords;
         }
     }
 }

@@ -13,11 +13,11 @@ namespace MoviesMafia.Controllers
             _apiCalls = apiCalls;
         }
 
-        public IActionResult GetMovie()
+        public async Task<IActionResult> GetMovie()
         {
-            if (_apiCalls.GetMovie().Result.API_Fetched)
+            if ((await _apiCalls.GetMovie()).API_Fetched)
             {
-                return View(_apiCalls.GetMovie());
+                return View(await _apiCalls.GetMovie());
 
             }
             else
@@ -29,12 +29,12 @@ namespace MoviesMafia.Controllers
         }
 
         [Authorize]
-        public IActionResult GetMoviePage(int page)
+        public async Task<IActionResult> GetMoviePage(int page)
         {
-            if (_apiCalls.GetMoviePage(page).Result.API_Fetched)
+            if ((await _apiCalls.GetMoviePage(page)).API_Fetched)
             {
 
-                return View("GetMovie", _apiCalls.GetMoviePage(page));
+                return View("GetMovie", await _apiCalls.GetMoviePage(page));
             }
             else
             {
@@ -42,12 +42,12 @@ namespace MoviesMafia.Controllers
             }
         }
         [Authorize]
-        public IActionResult PlaynowMovie(int playnow)
+        public async Task<IActionResult> PlaynowMovie(int playnow)
         {
-            if (_apiCalls.PlaynowMovie(playnow).Result.API_Fetched)
+            if ((await _apiCalls.PlaynowMovie(playnow)).API_Fetched)
             {
 
-                return View("PlaynowMovie", _apiCalls.PlaynowMovie(playnow));
+                return View("PlaynowMovie", await _apiCalls.PlaynowMovie(playnow));
             }
             else
             {
@@ -58,22 +58,22 @@ namespace MoviesMafia.Controllers
 
         [HttpPost]
 
-        public IActionResult Search(string search, string type = "Movie")
+        public async Task<IActionResult> Search(string search, string type = "Movie")
         {
             searchPassed = search;
             if (type == "Movie")
             {
 
                 ViewBag.x = searchPassed;
-                if (_apiCalls.SearchMovie(search, type).Result.API_Fetched)
+                if ((await _apiCalls.SearchMovie(search, type)).API_Fetched)
                 {
                     if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                     {
-                        return PartialView("SearchMovies", _apiCalls.SearchMovie(search, type));
+                        return PartialView("SearchMovies", await _apiCalls.SearchMovie(search, type));
                     }
                     else
                     {
-                        return View("SearchMovies", _apiCalls.SearchMovie(search, type));
+                        return View("SearchMovies", await _apiCalls.SearchMovie(search, type));
                     }
                 }
                 else
@@ -86,16 +86,16 @@ namespace MoviesMafia.Controllers
             {
 
                 ViewBag.x = searchPassed;
-                if (_apiCalls.SearchSeason(search, type).Result.API_Fetched)
+                if ((await _apiCalls.SearchSeason(search, type)).API_Fetched)
                 {
 
                     if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                     {
-                        return PartialView("SearchSeason", _apiCalls.SearchSeason(search, type));
+                        return PartialView("SearchSeason", await _apiCalls.SearchSeason(search, type));
                     }
                     else
                     {
-                        return View("SearchSeason", _apiCalls.SearchSeason(search, type));
+                        return View("SearchSeason", await _apiCalls.SearchSeason(search, type));
                     }
                 }
                 else
@@ -112,16 +112,16 @@ namespace MoviesMafia.Controllers
         }
 
         [Authorize]
-        public IActionResult SearchPage(int page, string type)
+        public async Task<IActionResult> SearchPage(int page, string type)
         {
 
             ViewBag.x = searchPassed;
             if (type == "Movie")
             {
 
-                if (_apiCalls.SearchMoviePage(searchPassed, page).Result.API_Fetched)
+                if ((await _apiCalls.SearchMoviePage(searchPassed, page)).API_Fetched)
                 {
-                    return View("SearchMovies", _apiCalls.SearchMoviePage(searchPassed, page));
+                    return View("SearchMovies", await _apiCalls.SearchMoviePage(searchPassed, page));
                 }
                 else
                 {
@@ -131,9 +131,9 @@ namespace MoviesMafia.Controllers
             else if (type == "Season")
             {
 
-                if (_apiCalls.SearchSeasonPage(searchPassed, page).Result.API_Fetched)
+                if ((await _apiCalls.SearchSeasonPage(searchPassed, page)).API_Fetched)
                 {
-                    return View("SearchSeason", _apiCalls.SearchSeasonPage(searchPassed, page));
+                    return View("SearchSeason", await _apiCalls.SearchSeasonPage(searchPassed, page));
                 }
                 else
                 {
@@ -145,12 +145,12 @@ namespace MoviesMafia.Controllers
                 return View("ApiNotFetched");
             }
         }
-        public IActionResult GetSeason()
+        public async Task<IActionResult> GetSeason()
         {
 
-            if (_apiCalls.GetSeason().Result.API_Fetched)
+            if ((await _apiCalls.GetSeason()).API_Fetched)
             {
-                return View(_apiCalls.GetSeason());
+                return View(await _apiCalls.GetSeason());
             }
             else
             {
@@ -159,13 +159,13 @@ namespace MoviesMafia.Controllers
             }
         }
         [Authorize]
-        public IActionResult GetSeasonPage(int page)
+        public async Task<IActionResult> GetSeasonPage(int page)
         {
 
-            if (_apiCalls.GetSeasonPage(page).Result.API_Fetched)
+            if ((await _apiCalls.GetSeasonPage(page)).API_Fetched)
             {
 
-                return View("GetSeason", _apiCalls.GetSeasonPage(page));
+                return View("GetSeason", await _apiCalls.GetSeasonPage(page));
             }
             else
             {
@@ -173,13 +173,13 @@ namespace MoviesMafia.Controllers
             }
         }
         [Authorize]
-        public IActionResult PlaynowSeason(int playnow, string title)
+        public async Task<IActionResult> PlaynowSeason(int playnow, string title)
         {
 
-            if (_apiCalls.PlaynowSeason(playnow).Result.API_Fetched)
+            if ((await _apiCalls.PlaynowSeason(playnow)).API_Fetched)
             {
                 ViewBag.PlaynowTitle = title;
-                return View("PlaynowSeason", _apiCalls.PlaynowSeason(playnow));
+                return View("PlaynowSeason", await _apiCalls.PlaynowSeason(playnow));
             }
             else
             {
@@ -191,9 +191,9 @@ namespace MoviesMafia.Controllers
         [Authorize]
         public async Task<IActionResult> PlaySeasonList(int playnow)
         {
-            
-            var result = _apiCalls.GetSeasonDetails(playnow);
-            if (result.Result.API_Fetched)
+
+            var result = await _apiCalls.GetSeasonDetails(playnow);
+            if (result.API_Fetched)
             {
                 return View("PlaySeasonList", result);
             }
