@@ -9,12 +9,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.SetupAppSettings();
 
-var connectionString = AppSettings.ConnectionStrings.DefaultConnection;
-var adminDetails = AppSettings.AdminDetails; 
+var folder = Environment.SpecialFolder.LocalApplicationData;
+var path = Environment.GetFolderPath(folder);
+var dbName = AppSettings.ConnectionStrings.DefaultConnection;
+var dbPath = Path.Join(path, dbName);
+var connectionString = $"Data Source={dbPath}";
+
+var adminDetails = AppSettings.AdminDetails;
 
 // Add services to the container.
 
-builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(connectionString));
 
 builder.Services.Configure<IdentityOptions>(options => options.SignIn.RequireConfirmedEmail = true);
 builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
